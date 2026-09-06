@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vape 3D Studio</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; font-family: system-ui, sans-serif; }
+      body {
+        background: radial-gradient(ellipse at 50% 40%, #2a2d33 0%, #15171a 55%, #0b0c0e 100%);
+        color: #ddd;
+      }
+      #app { display: block; width: 100%; height: 100%; }
+      #hud {
+        position: fixed; left: 16px; bottom: 14px; font-size: 12px; opacity: .7;
+        pointer-events: none; user-select: none; line-height: 1.5;
+      }
+      #hud b { color: #fff; }
+      .lil-gui { --width: 330px; --font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+    <div id="hud"><b id="hud-name">…</b><br /><span id="hud-status">cargando entorno…</span></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
