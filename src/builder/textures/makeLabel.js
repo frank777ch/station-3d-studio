@@ -91,13 +91,15 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
     ctx.shadowBlur = W * 0.004;
 
     if (logo) {
-      drawContain(ctx, tintImage(logo, label.textColor), frontX + frontW * 0.15, H * 0.09, frontW * 0.7, H * 0.09);
+      const rect = drawContain(ctx, tintImage(logo, label.textColor), frontX + frontW * 0.15, H * 0.09, frontW * 0.7, H * 0.09);
       if (label.line) {
-        const s = fitFont(ctx, label.line, maxW * 0.5, H * 0.035, 700);
+        const s = fitFont(ctx, label.line, rect.w * 0.45, H * 0.035, 700);
         ctx.font = `700 ${s}px ${FONT}`;
         ctx.letterSpacing = `${s * 0.25}px`;
         ctx.textAlign = 'right';
-        ctx.fillText(label.line, W / 2 + frontW * 0.35, H * 0.215);
+        ctx.textBaseline = 'top';
+        ctx.fillText(label.line, rect.right, rect.bottom + H * 0.015);
+        ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
       }
     } else if (label.brand) {
@@ -238,14 +240,17 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
     if (logo) {
       const boxW = frontW * 0.66;
       const boxH = H * 0.075;
-      drawContain(ctx, tintImage(logo, c.brand), W / 2 - boxW / 2, H * WAVE.brandY - boxH / 2, boxW, boxH);
+      const rect = drawContain(ctx, tintImage(logo, c.brand), W / 2 - boxW / 2, H * WAVE.brandY - boxH / 2, boxW, boxH);
       if (label.line) {
-        const s = fitFont(ctx, label.line, maxW * 0.4, H * 0.03, 700);
+        // "ECO II" alineado a la derecha con el borde real del logo, justo debajo
+        const s = fitFont(ctx, label.line, rect.w * 0.4, H * 0.028, 700);
         ctx.font = `700 ${s}px ${FONT}`;
         ctx.letterSpacing = `${s * 0.2}px`;
         ctx.fillStyle = c.brand;
         ctx.textAlign = 'right';
-        ctx.fillText(label.line, W / 2 + boxW / 2, H * WAVE.lineY);
+        ctx.textBaseline = 'top';
+        ctx.fillText(label.line, rect.right, rect.bottom + H * 0.012);
+        ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
       }
     } else {

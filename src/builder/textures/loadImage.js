@@ -19,12 +19,15 @@ export function drawCover(ctx, img, x, y, w, h) {
   ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
-/** Dibuja img dentro (contain) del rectángulo destino, centrada. */
+/** Dibuja img dentro (contain) del rectángulo destino, centrada. Devuelve el rect dibujado. */
 export function drawContain(ctx, img, x, y, w, h) {
   const s = Math.min(w / img.width, h / img.height);
   const dw = img.width * s;
   const dh = img.height * s;
-  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  const dx = x + (w - dw) / 2;
+  const dy = y + (h - dh) / 2;
+  ctx.drawImage(img, dx, dy, dw, dh);
+  return { x: dx, y: dy, w: dw, h: dh, right: dx + dw, bottom: dy + dh };
 }
 
 /** Devuelve un canvas con la imagen teñida de `color` (usa la imagen como máscara alfa). */
