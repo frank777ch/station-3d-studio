@@ -117,6 +117,16 @@ public/
 
 El archivo `.env` (claves de API) está en `.gitignore` y no se usa en la app.
 
+## Publicar en el VPS
+
+```bash
+npm run deploy
+```
+
+Compila y sube `dist/` por rsync a `/var/www/vape-studio` en el host `rendo-vps` (definido en `~/.ssh/config`).
+Caddy lo sirve en `http://108.175.12.132/`. Para cambiarlo a un dominio con HTTPS basta con
+sustituir el bloque `http://108.175.12.132` del Caddyfile por el nombre del dominio.
+
 ## Render
 
 - `MeshPhysicalMaterial` con envMap PMREM del HDR de estudio.

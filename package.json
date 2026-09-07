@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "setup:hdr": "node scripts/fetch-hdr.mjs"
+    "setup:hdr": "node scripts/fetch-hdr.mjs",
+    "deploy": "bash scripts/deploy-vps.sh"
   },
   "dependencies": {
     "lil-gui": "^0.21.0",
