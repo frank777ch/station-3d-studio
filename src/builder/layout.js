@@ -12,7 +12,7 @@ export function computeLayout(cfg) {
   const moduleY = ringY + ringH;
   const moduleTop = moduleY + moduleH;
   const mouthY = moduleTop;
-  const total = mouthY + cfg.mouthpiece.height;
+  const total = mouthY + (cfg.mouthpiece.enabled ? cfg.mouthpiece.height : 0);
 
   const labelY0 = bodyY + cfg.body.height * cfg.label.offsetY;
   const labelY1 = Math.min(labelY0 + cfg.body.height * cfg.label.coverage, bodyTop - 0.3);

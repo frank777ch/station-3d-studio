@@ -248,3 +248,32 @@ export function domeGeometry({
   geo.computeVertexNormals();
   return geo;
 }
+
+/**
+ * Prisma hueco (carcasa): pared de grosor `wall`, abierto arriba y abajo, con
+ * la boca superior inclinada (`topSlope` = cuánto baja el borde frontal, mm).
+ * Sección de rectángulo redondeado. Base en y = 0. Para la batería.
+ */
+export function hollowPrism({ width, depth, height, cornerRadius, wall = 1.5, topSlope = 0, curveSegments = 24 }) {
+  const shape = roundedRectShape(width, depth, cornerRadius);
+  const hole = roundedRectShape(width - 2 * wall, depth - 2 * wall, Math.max(0.5, cornerRadius - wall));
+  shape.holes.push(hole);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false, curveSegments });
+  geo.rotateX(-Math.PI / 2);
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox;
+  geo.translate(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+  if (topSlope > 0) {
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const t = pos.getY(i) / height;
+      const f = (pos.getZ(i) + depth / 2) / depth; // 0 atrás, 1 adelante
+      pos.setY(i, pos.getY(i) - topSlope * t * f);
+    }
+    pos.needsUpdate = true;
+  }
+  geo.deleteAttribute('normal');
+  geo.deleteAttribute('uv');
+  geo.computeVertexNormals();
+  return geo;
+}

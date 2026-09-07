@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { FINISHES, MOUTHPIECE_STYLES, BUTTON_SIDES, TEXTURE_MODES, IMAGE_FITS, LABEL_TEMPLATES } from '../models/_schema.js';
+import { FINISHES, MOUTHPIECE_STYLES, BUTTON_SIDES, TEXTURE_MODES, IMAGE_FITS, LABEL_TEMPLATES, SCREEN_TEMPLATES } from '../models/_schema.js';
 
 /**
  * Panel lil-gui. Edita el config en vivo; cada cambio llama a onChange().
@@ -60,6 +60,35 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     body.add(cfg.body, 'edgeRadius', 0, 6, 0.1).name('Radio cantos');
     body.addColor(cfg.body, 'color').name('Color');
     body.add(cfg.body, 'finish', FINISHES).name('Acabado');
+    body.add(cfg.body, 'topSlope', 0, 20, 0.5).name('Boca inclinada (mm)');
+
+    const cav = f('Cavidad (batería)');
+    cav.add(cfg.cavity, 'enabled').name('Cuerpo hueco');
+    cav.add(cfg.cavity, 'wall', 0.5, 5, 0.1).name('Pared (mm)');
+    cav.add(cfg.cavity, 'floorY', 0.5, 40, 0.5).name('Fondo (mm)');
+    cav.addColor(cfg.cavity, 'color').name('Color interior');
+
+    const led = f('Logo LED');
+    led.add(cfg.ledLogo, 'enabled').name('Visible');
+    led.addColor(cfg.ledLogo, 'color').name('Color');
+    led.add(cfg.ledLogo, 'length', 5, 60, 0.5).name('Tamaño (mm)');
+    led.add(cfg.ledLogo, 'offsetX', -20, 20, 0.5).name('Posición X');
+    led.add(cfg.ledLogo, 'offsetY', 0, 120, 0.5).name('Posición Y');
+    led.add(cfg.ledLogo, 'rotation', -180, 180, 5).name('Rotación');
+    led.add(cfg.ledLogo, 'emissiveIntensity', 0, 6, 0.1).name('Brillo');
+    const ledImg = { image: cfg.ledLogo.image ?? '' };
+    led.add(ledImg, 'image').name('PNG (public/)').onChange((v) => { cfg.ledLogo.image = v.trim() || null; });
+
+    const fs = f('Pantalla frontal');
+    fs.add(cfg.frontScreen, 'enabled').name('Visible');
+    fs.add(cfg.frontScreen, 'template', SCREEN_TEMPLATES).name('Plantilla');
+    fs.add(cfg.frontScreen, 'width', 3, 30, 0.5).name('Ancho (mm)');
+    fs.add(cfg.frontScreen, 'height', 2, 20, 0.5).name('Alto (mm)');
+    fs.add(cfg.frontScreen, 'offsetX', -20, 20, 0.5).name('Posición X');
+    fs.add(cfg.frontScreen, 'offsetY', 0, 120, 0.5).name('Posición Y');
+    fs.add(cfg.frontScreen.data, 'battery', 0, 100, 1).name('Batería %');
+    fs.addColor(cfg.frontScreen.data, 'accent').name('Color acento');
+    fs.add(cfg.frontScreen, 'emissiveIntensity', 0, 5, 0.1).name('Brillo');
 
     const label = f('Etiqueta', true);
     label.add(cfg.label, 'enabled').name('Visible');
@@ -124,6 +153,7 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     mod.add(cfg.screenModule, 'height', 8, 40, 0.5).name('Alto módulo (mm)');
     mod.addColor(cfg.screenModule, 'color').name('Color módulo');
     const s = cfg.screenModule.screen;
+    mod.add(s, 'template', SCREEN_TEMPLATES).name('Plantilla');
     mod.add(s, 'width', 6, 30, 0.5).name('Ancho pantalla');
     mod.add(s, 'height', 4, 30, 0.5).name('Alto pantalla');
     mod.add(s, 'cornerRadius', 0, 6, 0.1).name('Radio pantalla');
@@ -138,6 +168,7 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     mod.addColor(s.data, 'accent').name('Color acento');
 
     const mp = f('Boquilla');
+    mp.add(cfg.mouthpiece, 'enabled').name('Visible');
     mp.add(cfg.mouthpiece, 'style', MOUTHPIECE_STYLES).name('Estilo');
     mp.add(cfg.mouthpiece, 'height', 3, 25, 0.5).name('Alto (mm)');
     mp.add(cfg.mouthpiece, 'width', 6, 40, 0.5).name('Ancho (mm)');

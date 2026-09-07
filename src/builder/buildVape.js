@@ -9,6 +9,8 @@ import { buildBand } from './parts/band.js';
 import { buildLabel } from './parts/label.js';
 import { buildButton } from './parts/button.js';
 import { buildBase } from './parts/base.js';
+import { buildLedLogo } from './parts/ledLogo.js';
+import { buildFrontScreen } from './parts/frontScreen.js';
 
 const MM_TO_M = 0.001;
 
@@ -33,8 +35,10 @@ export function buildVape(config, { anisotropy = 8 } = {}) {
   if (cfg.band.enabled) group.add(buildBand(cfg, L));
   if (cfg.frameRing.enabled) group.add(buildFrameRing(cfg, L));
   if (cfg.screenModule.enabled) group.add(buildScreenModule(cfg, L));
-  group.add(buildMouthpiece(cfg, L));
+  if (cfg.mouthpiece.enabled) group.add(buildMouthpiece(cfg, L));
   if (cfg.button.enabled) group.add(buildButton(cfg, L));
+  if (cfg.ledLogo.enabled) group.add(buildLedLogo(cfg, L));
+  if (cfg.frontScreen.enabled) group.add(buildFrontScreen(cfg, L));
 
   const pending = [];
   group.traverse((o) => o.userData.ready && pending.push(o.userData.ready));

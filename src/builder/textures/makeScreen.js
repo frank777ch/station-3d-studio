@@ -44,7 +44,39 @@ export function makeScreenTexture(screen, { aspect }) {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
 
+  function drawPercent() {
+    const { battery, accent } = screen.data;
+    const pct = Math.max(0, Math.min(100, battery));
+    ctx.fillStyle = '#030405';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `800 ${H * 0.62}px ${FONT}`;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.letterSpacing = `${-H * 0.03}px`;
+    ctx.fillText(`${Math.round(pct)}`, W * 0.62, H * 0.5);
+    ctx.font = `700 ${H * 0.22}px ${FONT}`;
+    ctx.textAlign = 'left';
+    ctx.fillText('%', W * 0.63, H * 0.66);
+    // tres barritas de color (como la pantalla real)
+    const bars = [accent, '#ff4d4d', '#4da3ff'];
+    const bw = W * 0.06;
+    const bh = H * 0.62;
+    bars.forEach((c, i) => {
+      ctx.fillStyle = c;
+      ctx.shadowColor = c;
+      ctx.shadowBlur = H * 0.08;
+      ctx.beginPath();
+      ctx.roundRect(W * 0.76 + i * bw * 1.35, H * 0.19, bw, bh, bw * 0.3);
+      ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+    ctx.letterSpacing = '0px';
+    texture.needsUpdate = true;
+  }
+
   function drawProcedural() {
+    if (screen.template === 'percent') return drawPercent();
     const { battery, boost, iceBoost, accent } = screen.data;
     ctx.fillStyle = '#030405';
     ctx.fillRect(0, 0, W, H);

@@ -1,5 +1,3 @@
-import watermelonIce from './flavors/watermelon-ice.js';
-import tobaccoVirginia from './flavors/tobacco-virginia.js';
-import capuccino from './flavors/capuccino.js';
+import flavors from './flavors.js';
 
-export default [watermelonIce, tobaccoVirginia, capuccino];
+export default flavors;

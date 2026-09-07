@@ -30,34 +30,28 @@ products/
     NOTES.md          medidas estimadas, qué muestra cada foto
     references/       fotos de referencia (no se sirven en la web)
     base.js           config base del producto
-    flavors/          una variante por sabor
-      watermelon-ice.js
-      tobacco-virginia.js
-      capuccino.js
+    flavors.js        tabla de sabores: una línea por sabor (50 sabores)
     index.js          exporta el array de variantes
+  lifepod-eco-ii-battery/
+    base.js, NOTES.md, references/, index.js
   lifepod-eco-iii/
     base.js, flavors/, index.js
 ```
 
-Un sabor solo sobreescribe lo que cambia respecto a `base.js`:
+Un sabor del refill es una línea en `flavors.js` con la zona superior y la central; el resto se deriva
+(logo del color de la zona central, zona inferior aclarada, textos en blanco):
 
 ```js
-// products/lifepod-eco-ii-refill/flavors/capuccino.js
-import { defineVariant } from '../../../src/models/_schema.js';
-import base from '../base.js';
-
-export default defineVariant(base, {
-  id: 'lifepod-eco-ii-refill-capuccino',
-  name: 'Life Pod Eco II Refill · Capuccino',
-  label: { flavor: 'CAPUCCINO', colors: { top: '#b8734a', main: '#0f6b3a', bottom: '#9a5a36', brand: '#1f9a4f' } },
-});
+['capuccino', 'Capuccino', '#b8734a', '#0f6b3a', { src: 'foto' }],
 ```
+
+27 sabores tienen colores tomados de las fotos oficiales (`src: 'foto'`) y 23 del catálogo oficial
+sin foto tienen colores estimados por el nombre (`src: 'estimado'`).
 
 ### Añadir un sabor
 
-1. Elige el producto en el panel, ajusta colores y textos, y pulsa **Descargar config JSON**.
-2. Crea `products/<producto>/flavors/<sabor>.js` con `defineVariant(base, {...})` y copia solo los campos que cambian.
-3. Añádelo al `index.js` del producto. Aparece en el selector.
+1. Elige el refill en el panel, ajusta los colores y pulsa **Descargar config JSON** si quieres guardarlos.
+2. Añade una línea a `products/lifepod-eco-ii-refill/flavors.js`. Aparece en el selector.
 
 ### Añadir un producto
 
@@ -71,13 +65,16 @@ Todas las medidas en **milímetros**. Ver `src/models/_schema.js` para los valor
 
 | Sección | Campos |
 | --- | --- |
-| `body` | `width`, `depth`, `height`, `cornerRadius`, `edgeRadius`, `color`, `finish` (`glossy` / `mate`) |
+| `body` | `width`, `depth`, `height`, `cornerRadius`, `edgeRadius`, `color`, `finish` (`glossy` / `mate`), `topSlope` |
 | `frameRing` | `enabled`, `height`, `inset`, `color`, `metalness`, `roughness` |
 | `screenModule` | `enabled`, `height`, `color`, `screen.{width, height, cornerRadius, offsetY, mode, image, emissiveIntensity, data.{battery, boost, iceBoost, accent}}` |
 | `mouthpiece` | `style` (`flat` / `duckbill` / `round` / `dome`), `height`, `width`, `depth`, `color`, `translucent`, `transmission`, `opacity`, `thickness` |
 | `band` | `enabled`, `height`, `color`, `roughness` |
 | `button` | `enabled`, `side` (`left` / `right` / `front`), `width`, `height`, `offsetY`, `color` |
 | `base` | `enabled`, `height`, `inset`, `color` (placa inferior, refills) |
+| `cavity` | `enabled`, `wall`, `floorY`, `color` (cuerpo hueco abierto arriba; con `body.topSlope` la boca queda inclinada) |
+| `ledLogo` | `enabled`, `image`, `color`, `length`, `offsetX`, `offsetY`, `rotation`, `emissiveIntensity` (logo iluminado en la cara frontal) |
+| `frontScreen` | `enabled`, `template` (`boost` / `percent`), `width`, `height`, `offsetX`, `offsetY`, `data.battery`, `emissiveIntensity` |
 | `label` | `enabled`, `template` (`gradient` / `wave`), `mode`, `image`, `imageFit` (`front` / `wrap`), `logoImage`, `brand`, `line`, `flavor`, `puffs`, `puffsLabel`, `gradient[]`, `gradientAngle`, `textColor`, `colors.{top, main, bottom, brand, flavorText, puffsText, outline}`, `metallic`, `coverage`, `offsetY`, `resolution` |
 
 ## Plantillas de etiqueta

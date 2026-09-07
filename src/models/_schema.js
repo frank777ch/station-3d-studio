@@ -6,6 +6,9 @@
  * @property {string} id
  * @property {string} name
  * @property {{width:number, depth:number, height:number, cornerRadius:number, edgeRadius:number, color:string, finish:'glossy'|'mate'}} body
+ * @property {{enabled:boolean, wall:number, floorY:number, color:string}} cavity
+ * @property {{enabled:boolean, image:string|null, color:string, length:number, offsetX:number, offsetY:number, rotation:number, emissiveIntensity:number}} ledLogo
+ * @property {{enabled:boolean, template:'boost'|'percent', width:number, height:number, cornerRadius:number, offsetX:number, offsetY:number, mode:string, image:string|null, data:object, emissiveIntensity:number}} frontScreen
  * @property {{enabled:boolean, height:number, inset:number, color:string}} base
  * @property {{enabled:boolean, height:number, inset:number, color:string, metalness:number, roughness:number}} frameRing
  * @property {{enabled:boolean, height:number, color:string, screen:{width:number, height:number, cornerRadius:number, offsetY:number, mode:'procedural'|'image', image:string|null, data:{battery:number, boost:boolean, iceBoost:boolean, accent:string}, emissiveIntensity:number}}} screenModule
@@ -21,11 +24,13 @@ export const BUTTON_SIDES = ['left', 'right', 'front'];
 export const TEXTURE_MODES = ['procedural', 'image'];
 export const IMAGE_FITS = ['front', 'wrap'];
 export const LABEL_TEMPLATES = ['gradient', 'wave'];
+export const SCREEN_TEMPLATES = ['boost', 'percent'];
 
 /** @type {VapeConfig} */
 export const DEFAULTS = {
   id: 'default',
   name: 'Default',
+  notes: '',
 
   body: {
     width: 26,
@@ -35,6 +40,39 @@ export const DEFAULTS = {
     edgeRadius: 1.5,
     color: '#0a0a0a',
     finish: 'glossy',
+    topSlope: 0,          // mm que baja el borde frontal de la boca (solo con cavity)
+  },
+
+  cavity: {
+    enabled: false,       // cuerpo hueco abierto por arriba (batería)
+    wall: 1.5,            // grosor de pared (mm)
+    floorY: 4,            // altura del fondo interior desde la base (mm)
+    color: '#050505',
+  },
+
+  ledLogo: {
+    enabled: false,
+    image: null,          // PNG máscara (ej. 'textures/lifepod-logo.png')
+    color: '#ff2a2a',
+    length: 30,           // mm del lado mayor
+    offsetX: -6,
+    offsetY: 34,          // centro, desde la base del cuerpo
+    rotation: 90,         // grados; 90 = se lee de abajo hacia arriba
+    emissiveIntensity: 2.2,
+  },
+
+  frontScreen: {
+    enabled: false,
+    template: 'percent',
+    width: 9,
+    height: 4.5,
+    cornerRadius: 0.8,
+    offsetX: -6,
+    offsetY: 9,
+    mode: 'procedural',
+    image: null,
+    data: { battery: 99, boost: false, iceBoost: false, accent: '#37d67a' },
+    emissiveIntensity: 1.8,
   },
 
   base: {
@@ -58,6 +96,7 @@ export const DEFAULTS = {
     height: 22,
     color: '#111111',
     screen: {
+      template: 'boost',
       width: 18,
       height: 12,
       cornerRadius: 1.5,
@@ -75,6 +114,7 @@ export const DEFAULTS = {
   },
 
   mouthpiece: {
+    enabled: true,
     style: 'flat',
     height: 9,
     width: 20,
