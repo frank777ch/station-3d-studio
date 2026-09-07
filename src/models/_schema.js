@@ -30,6 +30,7 @@ export const SCREEN_TEMPLATES = ['boost', 'percent'];
 export const DEFAULTS = {
   id: 'default',
   name: 'Default',
+  product: '',            // nombre del producto para agrupar en el catálogo
   notes: '',
 
   body: {

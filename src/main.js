@@ -4,7 +4,8 @@ import { setupEnvironment } from './core/environment.js';
 import { createControls } from './core/controls.js';
 import { buildVape } from './builder/buildVape.js';
 import { disposeObject } from './builder/utils/dispose.js';
-import { MODELS, MODEL_IDS, MODEL_OPTIONS } from './models/index.js';
+import { MODELS, MODEL_IDS, MODEL_OPTIONS, MODEL_LIST } from './models/index.js';
+import { createCatalog } from './ui/catalog.js';
 import { mergeWithDefaults, deepClone } from './models/_schema.js';
 import { createPanel } from './ui/panel.js';
 import { exportGLB } from './export/exportGLB.js';
@@ -40,9 +41,10 @@ pedestal.position.y = -0.002;
 scene.add(pedestal);
 
 // ---------- Estado ----------
+const startId = MODELS[location.hash.slice(1)] ? location.hash.slice(1) : MODEL_IDS[0];
 const state = {
-  currentId: MODEL_IDS[0],
-  config: mergeWithDefaults(MODELS[MODEL_IDS[0]]),
+  currentId: startId,
+  config: mergeWithDefaults(MODELS[startId]),
   vape: null,
 };
 const view = { autoRotate: false, exposure: 1.0, envIntensity: 1.0 };
@@ -74,12 +76,14 @@ function scheduleRebuild() {
   });
 }
 
-function selectModel(id) {
+function selectModel(id, { fromCatalog = false } = {}) {
   if (!MODELS[id]) return;
   state.currentId = id;
   state.config = mergeWithDefaults(MODELS[id]);
   rebuild();
   panel.refresh(id);
+  if (!fromCatalog) catalog.setActive(id);
+  history.replaceState(null, '', `#${id}`);
 }
 
 function applyView() {
@@ -118,6 +122,12 @@ const panel = createPanel({
     },
     reset: () => selectModel(state.currentId),
   },
+});
+
+const catalog = createCatalog({
+  models: MODEL_LIST,
+  initialId: state.currentId,
+  onSelect: (id) => selectModel(id, { fromCatalog: true }),
 });
 
 // ---------- Arranque ----------

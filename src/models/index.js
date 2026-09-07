@@ -10,8 +10,15 @@ import lifepodEcoIIBattery from '../../products/lifepod-eco-ii-battery/index.js'
  *   index.js      exporta el array de variantes
  * Para añadir un producto: crea la carpeta e impórtala aquí.
  */
-const ALL = [...lifepodEcoIIRefill, ...lifepodEcoIIBattery, ...lifepodEcoIII];
+const tag = (list, product) => list.map((m) => ({ ...m, product }));
+
+const ALL = [
+  ...tag(lifepodEcoIIBattery, 'Life Pod Eco II Batería'),
+  ...tag(lifepodEcoIIRefill, 'Life Pod Eco II Refill'),
+  ...tag(lifepodEcoIII, 'Life Pod Eco III'),
+];
 
 export const MODELS = Object.fromEntries(ALL.map((m) => [m.id, m]));
 export const MODEL_IDS = ALL.map((m) => m.id);
 export const MODEL_OPTIONS = Object.fromEntries(ALL.map((m) => [m.name, m.id]));
+export const MODEL_LIST = ALL;
