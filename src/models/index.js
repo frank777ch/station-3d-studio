@@ -1,6 +1,7 @@
 import lifepodEcoIII from '../../products/lifepod-eco-iii/index.js';
 import lifepodEcoIIRefill from '../../products/lifepod-eco-ii-refill/index.js';
 import lifepodEcoIIBattery from '../../products/lifepod-eco-ii-battery/index.js';
+import hqdEzBar from '../../products/hqd-ez-bar-1500/index.js';
 
 /**
  * Catálogo. Cada producto vive en products/<producto>/ con:
@@ -16,6 +17,7 @@ const ALL = [
   ...tag(lifepodEcoIIBattery, 'Life Pod Eco II Batería'),
   ...tag(lifepodEcoIIRefill, 'Life Pod Eco II Refill'),
   ...tag(lifepodEcoIII, 'Life Pod Eco III'),
+  ...tag(hqdEzBar, 'HQD Ez Bar 1500'),
 ];
 
 export const MODELS = Object.fromEntries(ALL.map((m) => [m.id, m]));

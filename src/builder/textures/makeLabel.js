@@ -331,6 +331,60 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
     });
   }
 
+  // ---------- template: vertical ----------
+  // Fondo degradado y textos girados 90° (se leen de arriba hacia abajo), como HQD / ElfBar.
+  function drawVerticalText(text, x, yCenter, size, weight, color, align = 'center', style = '', spacing = 0) {
+    ctx.save();
+    ctx.translate(x, yCenter);
+    ctx.rotate(Math.PI / 2);
+    ctx.font = `${style} ${weight} ${size}px ${FONT}`;
+    ctx.fillStyle = color;
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.letterSpacing = `${spacing}px`;
+    ctx.fillText(text, 0, 0);
+    ctx.restore();
+    ctx.letterSpacing = '0px';
+  }
+
+  function drawVertical(logo) {
+    const v = label.vertical;
+    drawGradient();
+    if (v.grooves > 0) {
+      ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+      ctx.lineWidth = Math.max(1, W * 0.002);
+      for (let i = 1; i <= v.grooves; i++) {
+        const x = frontX + (frontW * i) / (v.grooves + 1);
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+      }
+    }
+    const maxLen = H * 0.9;
+    if (logo) {
+      // logo girado en la posición de la marca
+      const lw = H * v.brandSize * 2.2;
+      const lh = lw * (logo.height / logo.width);
+      ctx.save();
+      ctx.translate(W / 2 + frontW * v.brandX, H * 0.5);
+      ctx.rotate(Math.PI / 2);
+      ctx.drawImage(tintImage(logo, label.textColor), -lw / 2, -lh / 2, lw, lh);
+      ctx.restore();
+    } else if (label.brand) {
+      const size = fitFont(ctx, label.brand, maxLen, H * v.brandSize, 900);
+      drawVerticalText(label.brand, W / 2 + frontW * v.brandX, H * 0.5, size, 900, label.textColor, 'center', '', size * -0.02);
+    }
+    if (label.line) {
+      const size = fitFont(ctx, label.line, maxLen * 0.5, H * 0.09, 900, 'italic');
+      drawVerticalText(label.line, W / 2 + frontW * v.lineX, H * 0.8, size, 900, label.textColor, 'center', 'italic');
+    }
+    if (label.flavor) {
+      const size = fitFont(ctx, label.flavor.toUpperCase(), maxLen * 0.6, H * 0.035, 700);
+      drawVerticalText(label.flavor.toUpperCase(), W / 2 + frontW * v.flavorX, H * 0.06, size, 700, label.textColor, 'left', '', size * 0.12);
+    }
+  }
+
   function draw({ image = null, logo = null, glyph = null } = {}) {
     ctx.clearRect(0, 0, W, H);
     ctx.letterSpacing = '0px';
@@ -340,11 +394,12 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
       return;
     }
     if (label.template === 'wave') drawWave(logo, glyph);
+    else if (label.template === 'vertical') drawVertical(logo);
     else drawGradient();
 
     if (image) {
       drawContain(ctx, image, frontX + frontW * 0.06, H * 0.06, frontW * 0.88, H * 0.88);
-    } else if (label.template !== 'wave') {
+    } else if (label.template === 'gradient') {
       drawGradientText(logo);
     }
     texture.needsUpdate = true;

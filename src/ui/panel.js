@@ -113,6 +113,14 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
       label.addColor(cfg.label, 'textColor').name('Color texto');
       label.add(cfg.label, 'gradientAngle', 0, 360, 1).name('Ángulo degradado');
     }
+    if (cfg.label.template === 'vertical') {
+      const vf = label.addFolder('Texto vertical');
+      vf.add(cfg.label.vertical, 'brandSize', 0.05, 0.6, 0.01).name('Tamaño marca');
+      vf.add(cfg.label.vertical, 'brandX', -0.5, 0.5, 0.01).name('Marca X');
+      vf.add(cfg.label.vertical, 'lineX', -0.5, 0.5, 0.01).name('Línea X');
+      vf.add(cfg.label.vertical, 'flavorX', -0.5, 0.5, 0.01).name('Sabor X');
+      vf.add(cfg.label.vertical, 'grooves', 0, 8, 1).name('Ranuras');
+    }
     const logoImg = { image: cfg.label.logoImage ?? '' };
     label.add(logoImg, 'image').name('Logo PNG (public/)').onChange((v) => { cfg.label.logoImage = v.trim() || null; });
     const glyphImg = { image: cfg.label.glyphImage ?? '' };
@@ -124,7 +132,7 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     label.add(labelImg, 'image').name('Imagen (public/)').onChange((v) => { cfg.label.image = v.trim() || null; });
     label.add(cfg.label, 'imageFit', IMAGE_FITS).name('Ajuste imagen');
 
-    const grad = cfg.label.template === 'gradient' ? label.addFolder('Degradado') : null;
+    const grad = cfg.label.template !== 'wave' ? label.addFolder('Degradado') : null;
     const rebuildGradient = () => {
       if (!grad) return;
       [...grad.controllers].forEach((c) => c.destroy());
@@ -173,6 +181,8 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     mp.add(cfg.mouthpiece, 'height', 3, 25, 0.5).name('Alto (mm)');
     mp.add(cfg.mouthpiece, 'width', 6, 40, 0.5).name('Ancho (mm)');
     mp.add(cfg.mouthpiece, 'depth', 4, 30, 0.5).name('Grosor (mm)');
+    mp.add(cfg.mouthpiece, 'offsetX', -20, 20, 0.5).name('Posición X');
+    mp.add(cfg.mouthpiece, 'offsetZ', -15, 15, 0.5).name('Posición Z');
     mp.addColor(cfg.mouthpiece, 'color').name('Color');
     mp.add(cfg.mouthpiece, 'translucent').name('Translúcida');
     mp.add(cfg.mouthpiece, 'transmission', 0, 1, 0.01).name('Transmisión');

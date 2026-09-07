@@ -23,7 +23,7 @@ export const MOUTHPIECE_STYLES = ['flat', 'duckbill', 'round', 'dome'];
 export const BUTTON_SIDES = ['left', 'right', 'front'];
 export const TEXTURE_MODES = ['procedural', 'image'];
 export const IMAGE_FITS = ['front', 'wrap'];
-export const LABEL_TEMPLATES = ['gradient', 'wave'];
+export const LABEL_TEMPLATES = ['gradient', 'wave', 'vertical'];
 export const SCREEN_TEMPLATES = ['boost', 'percent'];
 
 /** @type {VapeConfig} */
@@ -117,6 +117,8 @@ export const DEFAULTS = {
   mouthpiece: {
     enabled: true,
     style: 'flat',
+    offsetX: 0,       // desplazamiento lateral (mm)
+    offsetZ: 0,       // desplazamiento frontal (mm)
     height: 9,
     width: 20,
     depth: 9,
@@ -176,6 +178,14 @@ export const DEFAULTS = {
       outline: '#e8e8e8',   // filete plateado entre zonas
     },
     metallic: true,         // acabado foil (solo template wave)
+    // template 'vertical' (texto girado, estilo HQD / ElfBar)
+    vertical: {
+      brandSize: 0.34,      // alto del texto de marca (fracción de la altura de etiqueta)
+      brandX: 0.36,         // posición horizontal del texto de marca (fracción del ancho frontal, desde el centro)
+      lineX: 0.2,           // posición de la línea/sub-marca
+      flavorX: -0.34,       // posición del sabor
+      grooves: 0,           // líneas verticales sutiles (0 = ninguna)
+    },
     coverage: 0.7,
     offsetY: 0.08,
     resolution: 1024,

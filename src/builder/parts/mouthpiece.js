@@ -40,7 +40,7 @@ export function buildMouthpiece(cfg, L) {
 
   const mesh = new THREE.Mesh(geo, makeMouthpieceMaterial(mp));
   mesh.name = 'mouthpieceShell';
-  mesh.position.y = L.mouthY;
+  mesh.position.set(mp.offsetX, L.mouthY, mp.offsetZ);
   group.add(mesh);
 
   // Ranura de aire en la parte superior
@@ -52,7 +52,7 @@ export function buildMouthpiece(cfg, L) {
     makeDarkPlasticMaterial('#050505'),
   );
   slot.name = 'airSlot';
-  slot.position.y = L.mouthY + mp.height - 1.2;
+  slot.position.set(mp.offsetX, L.mouthY + mp.height - 1.2, mp.offsetZ);
   group.add(slot);
 
   return group;
