@@ -1,56 +1,74 @@
 /**
- * ElfBar Ice King 40000. Cuerpo blanco con brochazos de color, "ELFBAR" girado en el color
- * del sabor, franja oscura a la derecha con la columna de pantalla (TURBO + 5 cubitos de hielo)
- * y boquilla translúcida descentrada a la derecha sobre esa franja.
- * Medidas estimadas de las fotos de tienda. Ver NOTES.md.
+ * ElfBar Ice King 40000. Cuerpo blanco brillante con brochazos de color y ELFBAR girado (se lee de
+ * abajo hacia arriba) con el símbolo del hada encima. El costado derecho es una banda de color en
+ * relieve con la pantalla vertical de cubitos de hielo (nivel de frío) y, arriba, la perilla
+ * cuadrada esmerilada con un copo de nieve. Boquilla blanca: trapecio visto de frente, cuña que se
+ * afina hacia la ranura vista de perfil.
+ * Medidas: 103.3 × 50.6 × 28.6 (tiendas); disposición del dibujo oficial del Ice King Pro. Ver NOTES.md.
  */
+const W = 50.6;
+const D = 28.6;
+const H = 88;
+const BAND = '#b8261c';
+
+export const sideParts = (band) => [
+  // banda de color en relieve en el costado derecho
+  { name: 'band', type: 'box', x: W / 2 + 0.35, y: H / 2, z: 0, width: 1.3, height: H - 9, depth: D - 5.5, cornerRadius: 0.6, edgeRadius: 0.5, color: band, material: 'glossy' },
+  // pantalla vertical de hielo
+  { name: 'iceScreen', type: 'screen', x: W / 2 + 1.03, y: 33, z: 0, width: 13.5, height: 50, cornerRadius: 3, rotation: [0, 90, 0],
+    screen: { template: 'ice', data: { level: 4, accent: '#5fe08a' }, emissiveIntensity: 1.5 } },
+  // perilla esmerilada con copo de nieve
+  { name: 'iceKnob', type: 'box', x: W / 2 + 2.6, y: 74, z: 0, width: 14, height: 3.2, depth: 14, cornerRadius: 3.2, edgeRadius: 1.2, rotation: [0, 0, 90],
+    color: '#eef3f7', material: 'glossy' },
+  { name: 'knobFace', type: 'screen', x: W / 2 + 4.23, y: 74, z: 0, width: 11.5, height: 11.5, cornerRadius: 2.6, rotation: [0, 90, 0],
+    screen: { template: 'snowflake', data: { accent: 'rgba(150,172,192,0.95)' }, emissiveIntensity: 0.85 } },
+];
+
 export default {
   id: 'elfbar-iceking-40000',
   name: 'ElfBar Ice King 40000',
-  notes: 'medidas estimadas de fotos de tienda',
+  notes: 'medidas de tienda (103.3 × 50.6 × 28.6), diseño del dibujo oficial',
 
-  body: { width: 51, depth: 26, height: 92, cornerRadius: 6, edgeRadius: 2.0, color: '#f3f1ee', finish: 'glossy' },
+  body: { width: W, depth: D, height: H, cornerRadius: 5.5, edgeRadius: 3, color: '#f3f1ee', finish: 'glossy', topRound: 4, bottomRound: 3 },
   base: { enabled: false },
   frameRing: { enabled: false },
   screenModule: { enabled: false },
   band: { enabled: false },
   button: { enabled: false },
+  frontScreen: { enabled: false },
   mouthpiece: {
-    enabled: true, style: 'flat', width: 10, depth: 10, height: 7, offsetX: 17,
-    color: '#eef2f6', translucent: true, transmission: 0.75, opacity: 0.88, thickness: 2,
-  },
-
-  frontScreen: {
-    enabled: true,
-    template: 'ice',
-    width: 7.5,
-    height: 40,
-    cornerRadius: 1.2,
-    offsetX: 19.5,
-    offsetY: 34,
-    data: { battery: 90, level: 3, accent: '#5fe08a' },
-    emissiveIntensity: 1.7,
+    enabled: true, style: 'loft', width: 20, depth: 16.5, height: 15.3, offsetX: -3, offsetY: -0.8,
+    cornerRadius: 4.5, edgeRadius: 1.6, profile: [[0, 1.04, 1.04], [0.12, 1, 1], [0.45, 0.92, 0.72], [1, 0.82, 0.34]],
+    color: '#f1f0ee', translucent: false, slotWidth: 0.42, slotDepth: 0.16,
   },
 
   label: {
     enabled: true,
     template: 'brush',
+    font: "'Montserrat'",
     brand: 'ELFBAR',
     line: 'Ice King',
     flavor: 'FLAVOR',
     textColor: '#ffffff',
-    coverage: 1,
-    offsetY: 0,
-    resolution: 1024,
+    resolution: 2048,
     brush: {
       background: '#f3f1ee',
-      colors: ['#b8261c', '#d76f51'],
-      angle: 62,
-      strokes: 3,
-      brandX: -0.30,
-      brandSize: 0.15,
-      stripWidth: 0.24,
-      stripColor: '#a1201a',
+      colors: ['#c8342a', '#f08a5a'],
+      angle: 28,
+      strokes: 4,
+      seams: true,
+      brandX: -0.3,
+      brandSize: 0.1,
+      glyphSize: 0.12,
+      brandWeight: 400,
+      brandSpacing: 0.5,
+      brandStart: 0.93,
+      brandLen: 0.66,
+      readUp: true,
+      stripWidth: 0.05,
+      stripColor: BAND,
     },
   },
+
+  extras: sideParts(BAND),
 };

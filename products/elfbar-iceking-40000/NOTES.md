@@ -1,31 +1,28 @@
 # ElfBar Ice King 40000
 
-Desechable recargable de ElfBar (40 000 puffs, 850 mAh, 5 niveles de frío). Cuerpo blanco con
-brochazos de color, "ELFBAR" girado en el color del sabor, un pequeño glifo arriba a la izquierda,
-franja oscura en el lado derecho con la columna de pantalla (TURBO y 5 cubitos de hielo que indican
-el nivel de frío) y boquilla translúcida descentrada sobre esa franja.
+Desechable recargable de ElfBar (40 000 puffs, 5 niveles de frío). Cuerpo blanco brillante con brochazos
+de color y ELFBAR girado (se lee de abajo hacia arriba) con el símbolo del hada encima. El **costado
+derecho** es una banda de color en relieve con la pantalla vertical de cubitos de hielo y, arriba, la
+perilla cuadrada esmerilada con un copo de nieve. La boquilla es un trapecio visto de frente y una cuña
+que se afina hacia la ranura vista de perfil.
 
-Los cuatro sabores **Summer Edition** llevan un diseño distinto (playa con olas). Se aproximan con
-el fondo de color y brochazos claros; si se quiere fidelidad total, poner el arte como PNG con
-`label.mode = 'image'`.
+Los cuatro **Summer Edition** llevan bandas verticales onduladas con espuma (estilo `waves`).
 
 ## Referencias
 
-Fotos de tienda (Vape Station Perú) en `references/`, una por sabor. Vista frontal en tres cuartos.
+- `references/`: fotos de tienda (Vape Station Perú), una por sabor.
+- Dibujo oficial con medidas del Ice King Pro (elfbar.com): frente y costado, 100.6 × 46 × 25.
+- Vistas de tres cuartos del 40K y del 30K (mismo cuerpo) en tiendas.
 
-## Medidas estimadas (mm)
+## Medidas (mm)
 
-Sin datos oficiales. Proporciones de las fotos y del tamaño típico de esta gama (≈ 100 × 51 × 26).
+103.3 × 50.6 × 28.6 según tiendas. La posición de la pantalla y la perilla sale del dibujo oficial.
 
 | Parte | Valor |
 | --- | --- |
-| Cuerpo | 51 × 26 × 92 (ancho × grosor × alto) |
-| Franja de pantalla | 24 % del ancho frontal, a la derecha |
-| Pantalla | 7.5 × 40, centrada en la franja |
-| Boquilla | 10 × 10 × 7, desplazada 17 mm a la derecha |
-| Total | ≈ 99 |
-
-## Pendiente
-
-- Chaflán superior del cuerpo (la tapa real es más estrecha que el cuerpo).
-- Arte real de los Summer Edition.
+| Cuerpo | 50.6 × 28.6 × 88 |
+| Boquilla | 20 × 16.5 × 15.3, se afina a 34 % del grosor arriba |
+| Banda lateral | costado derecho completo, 1.3 de relieve |
+| Pantalla de hielo | 13.5 × 50, centro a 33 |
+| Perilla | 14 × 14, centro a 74 |
+| Total | ≈ 103 |

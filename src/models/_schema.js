@@ -19,12 +19,12 @@
  */
 
 export const FINISHES = ['glossy', 'mate'];
-export const MOUTHPIECE_STYLES = ['flat', 'duckbill', 'round', 'dome'];
+export const MOUTHPIECE_STYLES = ['flat', 'duckbill', 'round', 'dome', 'loft'];
 export const BUTTON_SIDES = ['left', 'right', 'front'];
 export const TEXTURE_MODES = ['procedural', 'image'];
 export const IMAGE_FITS = ['front', 'wrap'];
 export const LABEL_TEMPLATES = ['gradient', 'wave', 'vertical', 'brush', 'one', 'twoTone', 'pill'];
-export const SCREEN_TEMPLATES = ['boost', 'percent', 'ice', 'boostRow', 'mixpro'];
+export const SCREEN_TEMPLATES = ['boost', 'percent', 'ice', 'boostRow', 'mixpro', 'dial', 'snowflake', 'digits', 'levels'];
 
 /** @type {VapeConfig} */
 export const DEFAULTS = {
@@ -42,6 +42,18 @@ export const DEFAULTS = {
     color: '#0a0a0a',
     finish: 'glossy',
     topSlope: 0,          // mm que baja el borde frontal de la boca (solo con cavity)
+    // Silueta (cualquiera activa el modo loft: cuerpo con forma y etiqueta impresa encima)
+    loft: false,
+    profile: null,        // [[t, sx, sz], ...] escala de ancho/grosor a lo largo de la altura
+    topRound: 0,          // radio (mm) de las esquinas superiores vistas de frente
+    topChamfer: 0,        // chaflán (mm) de las esquinas superiores vistas de frente
+    bottomRound: 0,
+    bottomChamfer: 0,
+    topRoundDepth: 0,     // redondeo superior visto de perfil
+    bottomRoundDepth: 0,
+    edgeRadiusBottom: null, // canto inferior (por defecto = edgeRadius)
+    topColor: null,       // color de la tapa superior (por defecto = color)
+    bottomColor: null,    // color de la tapa inferior
   },
 
   cavity: {
@@ -68,6 +80,10 @@ export const DEFAULTS = {
     width: 9,
     height: 4.5,
     cornerRadius: 0.8,
+    chamfer: 0,           // > 0: pantalla achaflanada (octógono) en vez de redondeada
+    bezel: 0.6,           // margen del bisel (mm, 0 = sin bisel)
+    bezelDepth: 0,        // bisel en relieve (mm)
+    bezelColor: '#050505',
     offsetX: -6,
     offsetY: 9,
     mode: 'procedural',
@@ -119,9 +135,20 @@ export const DEFAULTS = {
 
   mouthpiece: {
     enabled: true,
-    style: 'flat',
+    style: 'flat',        // 'flat' | 'duckbill' | 'round' | 'dome' | 'loft'
+    // solo style 'loft' (mismas claves de silueta que el cuerpo)
+    profile: null,
+    cornerRadius: null,
+    edgeRadius: null,
+    topRound: 0,
+    topChamfer: 0,
+    topRoundDepth: 0,
+    slot: true,           // ranura de aire
+    slotWidth: null,      // fracción del ancho (null = automático)
+    slotDepth: null,      // fracción del grosor
     offsetX: 0,       // desplazamiento lateral (mm)
     offsetZ: 0,       // desplazamiento frontal (mm)
+    offsetY: 0,       // desplazamiento vertical (mm); negativo la hunde en el cuerpo
     height: 9,
     width: 20,
     depth: 9,
@@ -159,6 +186,7 @@ export const DEFAULTS = {
     mode: 'procedural',
     image: null,
     imageFit: 'front',
+    font: null,             // familia web para la marca (ej. "'Montserrat'"), con respaldo del sistema
     logoImage: null,        // PNG opcional que reemplaza el texto de marca
     glyphImage: null,       // PNG opcional del símbolo solo (costados)
     brand: 'BRAND',
@@ -190,6 +218,17 @@ export const DEFAULTS = {
       grooves: 0,           // líneas verticales sutiles (0 = ninguna)
       stripWidth: 0,        // franja oscura a la izquierda de la cara frontal (fracción del ancho frontal, 0 = ninguna)
       stripColor: '#0a0a0a',
+      readUp: false,        // true: los textos se leen de abajo hacia arriba
+      textAlpha: null,
+      highlight: null,      // brillo superior (0..1)
+      cap: null,            // tapa superior con borde en V: { y, dip, color, line }
+      backColor: null,      // carcasa trasera y costado izquierdo de otro color
+      backArcs: null,       // arcos en la trasera (cantidad)
+      arcColor: null,
+      // posición, tamaño, peso, espaciado (em), alineación y largo máximo de cada texto (null = por defecto)
+      brandY: null, brandWeight: null, brandSpacing: null, brandAlign: null, brandMaxLen: null,
+      lineY: null, lineSize: null, lineWeight: null, lineSpacing: null, lineAlign: null, lineStyle: null, lineMaxLen: null,
+      flavorY: null, flavorSize: null, flavorWeight: null, flavorSpacing: null, flavorAlign: null, flavorMaxLen: null,
     },
     // template 'brush' (fondo claro con brochazos de color, estilo ElfBar Ice King)
     brush: {
@@ -201,6 +240,10 @@ export const DEFAULTS = {
       brandSize: 0.16,
       stripWidth: 0.22,                 // franja oscura a la derecha de la cara frontal (fracción, 0 = ninguna)
       stripColor: '#1a1a1a',
+      style: 'strokes',                 // 'strokes' (pincel seco) | 'waves' (bandas onduladas)
+      seams: false,                     // líneas blancas en relieve
+      readUp: null,                     // null = se lee de abajo hacia arriba
+      brandColor: null, brandWeight: null, brandSpacing: null, brandStart: null, brandLen: null, glyphSize: null,
     },
     // template 'one' (placa lisa o metálica con logo vertical, glifo grande tono sobre tono y zona inferior negra en diagonal)
     one: {
@@ -210,6 +253,10 @@ export const DEFAULTS = {
       splitRight: 0.22,                 // ... y en el borde derecho
       bottomColor: '#0a0a0a',
       flavorSize: 0.022,
+      flavorAt: null, flavorColor: null,
+      glyphX: null, glyphY: null, glyphLine: null,
+      logoX: null, logoLen: null, logoBottom: null, lineSize: null, lineOffset: null, readUp: null,
+      sideStripes: 0, stripeColor: '#0e0e0e',
     },
     // template 'twoTone' (cuerpo de dos colores con corte inclinado, estilo Rifbar MixPro)
     twoTone: {
@@ -217,6 +264,7 @@ export const DEFAULTS = {
       splitLeft: 0.27,                  // altura del corte en el borde izquierdo (fracción)
       splitRight: 0.20,                 // altura del corte en el borde derecho
       speckle: 0.35,                    // moteado sutil (0 = ninguno)
+      backText: null,                   // texto girado en la trasera
     },
     // template 'pill' (fondo oscuro con píldora vertical degradada y sabor girado, estilo refill Eco III)
     pill: {
@@ -226,11 +274,20 @@ export const DEFAULTS = {
       top: 0.28,                        // borde superior de la píldora (fracción de la altura)
       bottom: 0.985,
       tagColor: '#d8d8d8',
+      tagY: null, tagSize: null,
+      flare: null,                      // ensanche de la base (fracción del ancho frontal)
+      offsetX: null,
+      outline: null,                    // color del contorno
+      readUp: null,
+      flavorStart: null, flavorSize: null,
     },
     coverage: 0.7,
     offsetY: 0.08,
     resolution: 1024,
   },
+
+  // Piezas extra (módulos, diales, perillas, puertos...). Ver src/builder/parts/extras.js
+  extras: [],
 };
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);

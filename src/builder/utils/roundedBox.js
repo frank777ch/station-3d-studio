@@ -277,3 +277,221 @@ export function hollowPrism({ width, depth, height, cornerRadius, wall = 1.5, to
   geo.computeVertexNormals();
   return geo;
 }
+
+/**
+ * Puntos de un anillo de rectángulo redondeado con estructura FIJA (misma cantidad de puntos
+ * para cualquier tamaño), empezando en el centro trasero y recorriendo izquierda → frente →
+ * derecha → atrás, igual que la manga: el centro frontal queda en u = 0.5.
+ */
+function ringPoints(halfW, halfD, r, seg) {
+  r = Math.max(0.01, Math.min(r, halfW - 1e-4, halfD - 1e-4));
+  const pts = [[0, -halfD]];
+  const arc = (cx, cz, a0, a1) => {
+    for (let i = 0; i <= seg; i++) {
+      const a = a0 + ((a1 - a0) * i) / seg;
+      pts.push([cx + r * Math.cos(a), cz + r * Math.sin(a)]);
+    }
+  };
+  arc(-halfW + r, -halfD + r, -Math.PI / 2, -Math.PI);
+  arc(-halfW + r, halfD - r, Math.PI, Math.PI / 2);
+  pts.push([0, halfD]);
+  arc(halfW - r, halfD - r, Math.PI / 2, 0);
+  arc(halfW - r, -halfD + r, 0, -Math.PI / 2);
+  pts.push([0, -halfD]);
+  return pts;
+}
+
+/**
+ * Sólido "loft": secciones de rectángulo redondeado apiladas en Y, cada una con su ancho,
+ * grosor y radio (section(y) → { w, d, r }). Permite hombros, chaflanes y siluetas curvas.
+ * Los cantos superior/inferior se redondean con edgeTop / edgeBottom (mm).
+ * UVs de la cara lateral como la manga (u = perímetro con el frente en 0.5, v = y / height),
+ * así la etiqueta se imprime directamente sobre la forma. Grupos: 0 = lateral, 1 = tapa inferior, 2 = tapa superior.
+ * Base en y = 0.
+ */
+export function loftGeometry({
+  height,
+  section,
+  samples = [],
+  rings = 40,
+  edgeTop = 0,
+  edgeBottom = 0,
+  edgeSegments = 6,
+  segmentsPerCorner = 10,
+  capTop = true,
+  capBottom = true,
+}) {
+  const eT = Math.max(0, Math.min(edgeTop, height / 2 - 0.01));
+  const eB = Math.max(0, Math.min(edgeBottom, height / 2 - 0.01));
+
+  // niveles: canto inferior, cuerpo (muestreo uniforme + puntos del perfil), canto superior
+  const levels = [];
+  const push = (y, inset) => levels.push({ y, inset });
+  if (eB > 0) for (let k = 0; k < edgeSegments; k++) {
+    const phi = (k / edgeSegments) * (Math.PI / 2);
+    push(eB - eB * Math.cos(phi), eB - eB * Math.sin(phi));
+  }
+  const ys = new Set();
+  for (let i = 0; i <= rings; i++) ys.add(eB + ((height - eB - eT) * i) / rings);
+  samples.forEach((y) => { if (y > eB && y < height - eT) ys.add(y); });
+  [...ys].sort((a, b) => a - b).forEach((y) => push(y, 0));
+  if (eT > 0) for (let k = 1; k <= edgeSegments; k++) {
+    const phi = (k / edgeSegments) * (Math.PI / 2);
+    push(height - eT + eT * Math.sin(phi), eT - eT * Math.cos(phi));
+  }
+
+  const positions = [];
+  const uvs = [];
+  const sideIdx = [];
+  let n = 0;
+  levels.forEach(({ y, inset }, li) => {
+    const s = section(Math.min(height, Math.max(0, y)));
+    const hw = Math.max(0.05, s.w / 2 - inset);
+    const hd = Math.max(0.05, s.d / 2 - inset);
+    const pts = ringPoints(hw, hd, Math.max(0.01, s.r - inset), segmentsPerCorner);
+    n = pts.length;
+    const lens = [0];
+    for (let i = 1; i < n; i++) lens.push(lens[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const total = lens[n - 1];
+    pts.forEach(([x, z], i) => {
+      positions.push(x, y, z);
+      uvs.push(lens[i] / total, y / height);
+    });
+    levels[li].pts = pts;
+  });
+  for (let l = 0; l < levels.length - 1; l++) {
+    for (let i = 0; i < n - 1; i++) {
+      const a = l * n + i;
+      const b = a + 1;
+      const c = a + n;
+      const d = c + 1;
+      sideIdx.push(a, b, c, b, d, c);
+    }
+  }
+
+  // tapas (vértices propios para que el canto quede definido)
+  const capBottomIdx = [];
+  const capTopIdx = [];
+  const addCap = (level, up, capIdx) => {
+    const base = positions.length / 3;
+    level.pts.forEach(([x, z]) => {
+      positions.push(x, level.y, z);
+      uvs.push(0.5 + x / 200, 0.5 + z / 200);
+    });
+    const center = positions.length / 3;
+    positions.push(0, level.y, 0);
+    uvs.push(0.5, 0.5);
+    for (let i = 0; i < n - 1; i++) {
+      if (up) capIdx.push(base + i, base + i + 1, center);
+      else capIdx.push(base + i, center, base + i + 1);
+    }
+  };
+  if (capBottom) addCap(levels[0], false, capBottomIdx);
+  if (capTop) addCap(levels[levels.length - 1], true, capTopIdx);
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  geo.setIndex([...sideIdx, ...capBottomIdx, ...capTopIdx]);
+  geo.addGroup(0, sideIdx.length, 0);
+  if (capBottomIdx.length) geo.addGroup(sideIdx.length, capBottomIdx.length, 1);
+  if (capTopIdx.length) geo.addGroup(sideIdx.length + capBottomIdx.length, capTopIdx.length, 2);
+  geo.computeVertexNormals();
+  const top = levels[levels.length - 1];
+  geo.userData.topY = top.y;
+  return geo;
+}
+
+/** Interpola un perfil [[t, sx, sz], ...] (t de 0 a 1, ordenado) en t. */
+export function sampleProfile(profile, t) {
+  if (!profile || !profile.length) return [1, 1];
+  if (t <= profile[0][0]) return [profile[0][1], profile[0][2] ?? profile[0][1]];
+  for (let i = 1; i < profile.length; i++) {
+    const [t1, x1, z1 = x1] = profile[i];
+    if (t <= t1) {
+      const [t0, x0, z0 = x0] = profile[i - 1];
+      const k = (t - t0) / Math.max(1e-6, t1 - t0);
+      return [x0 + (x1 - x0) * k, z0 + (z1 - z0) * k];
+    }
+  }
+  const last = profile[profile.length - 1];
+  return [last[1], last[2] ?? last[1]];
+}
+
+/** Rectángulo con esquinas achaflanadas (octógono), centrado. */
+export function chamferRectShape(width, height, c) {
+  const w = width / 2;
+  const h = height / 2;
+  c = Math.max(0, Math.min(c, w, h));
+  const s = new THREE.Shape();
+  s.moveTo(-w + c, -h);
+  s.lineTo(w - c, -h);
+  s.lineTo(w, -h + c);
+  s.lineTo(w, h - c);
+  s.lineTo(w - c, h);
+  s.lineTo(-w + c, h);
+  s.lineTo(-w, h - c);
+  s.lineTo(-w, -h + c);
+  s.closePath();
+  return s;
+}
+
+/** Plano con UVs 0..1 a partir de un Shape centrado de tamaño width × height. */
+export function shapePlane(shape, width, height, curveSegments = 12) {
+  const geo = new THREE.ShapeGeometry(shape, curveSegments);
+  const uv = geo.attributes.uv;
+  const pos = geo.attributes.position;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, pos.getX(i) / width + 0.5, pos.getY(i) / height + 0.5);
+  uv.needsUpdate = true;
+  return geo;
+}
+
+/**
+ * Función de sección para loftGeometry a partir de medidas y silueta:
+ *   profile        [[t, sx, sz], ...] escala del ancho y grosor a lo largo de la altura (t = 0 base, 1 tope)
+ *   topRound       radio (mm) de las esquinas superiores vistas de frente (redondeo del ancho)
+ *   topChamfer     chaflán (mm) de las esquinas superiores vistas de frente
+ *   bottomRound / bottomChamfer   lo mismo abajo
+ *   topRoundDepth / bottomRoundDepth   redondeo vista de perfil (del grosor)
+ * Devuelve { section, samples, perimeter, frontFraction, sideFraction }.
+ */
+export function shapeSection({
+  width, depth, height, cornerRadius = 0, profile = null,
+  topRound = 0, topChamfer = 0, bottomRound = 0, bottomChamfer = 0,
+  topRoundDepth = 0, bottomRoundDepth = 0,
+}) {
+  const H = height;
+  const inset = (dist, R, type) => {
+    if (!(R > 0) || dist >= R) return 0;
+    const k = R - dist;
+    return type === 'round' ? R - Math.sqrt(Math.max(0, R * R - k * k)) : k;
+  };
+  const section = (y) => {
+    const [sx, sz] = sampleProfile(profile, y / H);
+    let w = width * sx;
+    let d = depth * sz;
+    w -= 2 * (inset(H - y, topRound, 'round') + inset(H - y, topChamfer, 'chamfer')
+      + inset(y, bottomRound, 'round') + inset(y, bottomChamfer, 'chamfer'));
+    d -= 2 * (inset(H - y, topRoundDepth, 'round') + inset(y, bottomRoundDepth, 'round'));
+    w = Math.max(0.2, w);
+    d = Math.max(0.2, d);
+    const r = Math.min(cornerRadius * Math.min(sx, sz), w / 2, d / 2);
+    return { w, d, r };
+  };
+  const samples = [];
+  (profile ?? []).forEach(([t]) => samples.push(t * H));
+  const dense = (from, to, n = 14) => { for (let i = 0; i <= n; i++) samples.push(from + ((to - from) * i) / n); };
+  const topZ = Math.max(topRound, topChamfer, topRoundDepth);
+  const botZ = Math.max(bottomRound, bottomChamfer, bottomRoundDepth);
+  if (topZ > 0) dense(H - topZ, H);
+  if (botZ > 0) dense(0, botZ);
+  const r = Math.min(cornerRadius, width / 2, depth / 2);
+  const perimeter = 2 * (width - 2 * r) + 2 * (depth - 2 * r) + 2 * Math.PI * r;
+  return { section, samples, perimeter, frontFraction: width / perimeter, sideFraction: depth / perimeter };
+}
+
+/** ¿El cuerpo usa silueta (loft con etiqueta impresa) en vez de prisma + manga? */
+export function isLoftShape(b) {
+  return !!(b.loft || (b.profile && b.profile.length) || b.topRound || b.topChamfer || b.bottomRound
+    || b.bottomChamfer || b.topRoundDepth || b.bottomRoundDepth);
+}

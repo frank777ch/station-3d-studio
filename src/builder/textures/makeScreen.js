@@ -314,8 +314,121 @@ export function makeScreenTexture(screen, { aspect }) {
     texture.needsUpdate = true;
   }
 
+  /**
+   * Dial redondo (Voopoo Zest): anillo de segmentos alrededor y texto central.
+   * data.text ('88%' por defecto con data.battery), data.accent (anillo), data.accent2 (segundo arco),
+   * data.icon 'N' dibuja una N grande (selector de nicotina).
+   */
+  function drawDial() {
+    const d = screen.data;
+    ctx.fillStyle = '#020304';
+    ctx.fillRect(0, 0, W, H);
+    const cx = W / 2;
+    const cy = H / 2;
+    const R = Math.min(W, H) * 0.42;
+    const seg = 18;
+    const lit = d.icon === 'N' ? seg : Math.round((seg * (d.ring ?? d.battery ?? 88)) / 100);
+    for (let i = 0; i < seg; i++) {
+      const a0 = -Math.PI / 2 + (i / seg) * Math.PI * 2 + 0.04;
+      const a1 = a0 + (Math.PI * 2) / seg - 0.08;
+      const on = i < lit;
+      const col = i < seg / 2 ? d.accent : d.accent2 ?? d.accent;
+      ctx.strokeStyle = on ? col : '#1a1f24';
+      ctx.shadowColor = on ? col : 'transparent';
+      ctx.shadowBlur = on ? R * 0.12 : 0;
+      ctx.lineWidth = R * 0.16;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, a0, a1);
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = d.textColor ?? '#e8f4ff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (d.icon === 'N') {
+      ctx.fillStyle = d.accent;
+      ctx.font = `800 ${R * 0.9}px ${FONT}`;
+      ctx.fillText('N', cx, cy + R * 0.04);
+    } else {
+      const txt = d.text ?? `${Math.round(d.battery ?? 88)}`;
+      ctx.font = `800 ${R * 0.62}px ${FONT}`;
+      ctx.fillText(txt, cx - R * 0.08, cy + R * 0.02);
+      ctx.font = `700 ${R * 0.26}px ${FONT}`;
+      ctx.fillText('%', cx + R * 0.46, cy + R * 0.16);
+    }
+    texture.needsUpdate = true;
+  }
+
+  /** Perilla de hielo (Ice King): cubo esmerilado con un copo de nieve grabado. */
+  function drawSnowflake() {
+    const d = screen.data;
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#fbfdff');
+    g.addColorStop(0.5, '#dfe8ef');
+    g.addColorStop(1, '#c9d6e0');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.strokeStyle = d.accent ?? 'rgba(150,170,190,0.9)';
+    ctx.lineWidth = Math.max(2, W * 0.018);
+    ctx.lineCap = 'round';
+    const R = Math.min(W, H) * 0.3;
+    for (let k = 0; k < 6; k++) {
+      ctx.rotate(Math.PI / 3);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -R);
+      ctx.moveTo(0, -R * 0.55);
+      ctx.lineTo(-R * 0.22, -R * 0.78);
+      ctx.moveTo(0, -R * 0.55);
+      ctx.lineTo(R * 0.22, -R * 0.78);
+      ctx.stroke();
+    }
+    ctx.restore();
+    texture.needsUpdate = true;
+  }
+
+  /** Solo dígitos grandes (data.text), para pantallitas numéricas. */
+  function drawDigits() {
+    const d = screen.data;
+    ctx.fillStyle = '#020304';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = d.accent ?? '#ffffff';
+    ctx.font = `800 ${H * 0.7}px ${FONT}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(d.text ?? `${Math.round(d.battery ?? 99)}`, W / 2, H / 2);
+    texture.needsUpdate = true;
+  }
+
+  /** Columna vertical de niveles: TURBO, iconos y 25/50/75/100 % (costado del ElfBar BC15000). */
+  function drawLevels() {
+    const d = screen.data;
+    ctx.fillStyle = '#020304';
+    ctx.fillRect(0, 0, W, H);
+    const items = ['TURBO', '💧⚡', '25%', '50%', '75%', '100%'];
+    ctx.fillStyle = d.accent ?? '#e8e8e8';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    items.forEach((t, i) => {
+      const y = H * (0.1 + (0.82 * i) / (items.length - 1));
+      ctx.save();
+      ctx.translate(W / 2, y);
+      ctx.rotate(-Math.PI / 2);
+      ctx.font = `800 ${Math.min(W * 0.42, H * 0.07)}px ${FONT}`;
+      ctx.fillText(t === '💧⚡' ? '• ⚡' : t, 0, 0);
+      ctx.restore();
+    });
+    texture.needsUpdate = true;
+  }
+
   function drawProcedural() {
     if (screen.template === 'percent') return drawPercent();
+    if (screen.template === 'levels') return drawLevels();
+    if (screen.template === 'dial') return drawDial();
+    if (screen.template === 'snowflake') return drawSnowflake();
+    if (screen.template === 'digits') return drawDigits();
     if (screen.template === 'ice') return drawIce();
     if (screen.template === 'boostRow') return drawBoostRow();
     if (screen.template === 'mixpro') return drawMixpro();

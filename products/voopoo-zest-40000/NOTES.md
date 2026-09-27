@@ -1,27 +1,23 @@
 # Voopoo Zest 40000
 
-Desechable recargable de Voopoo (40 000 puffs, 20 ml, 800 mAh, 3 niveles de nicotina, 2 modos).
-Cuerpo muy redondeado y brillante, con un módulo negro que envuelve el canto izquierdo donde van
-dos diales redondos (pantalla de porcentaje arriba y selector de nicotina abajo). "VOOPOO" girado en
-el centro y el sabor pequeño girado a la derecha. Boquilla translúcida transparente.
+Desechable recargable de Voopoo (40 000 puffs, 20 ml, 3 niveles de nicotina, 2 modos). Cuerpo muy
+redondeado con frente metálico de color; la carcasa negra brillante envuelve el costado izquierdo y la
+trasera (con arcos del color del sabor). En el lado izquierdo sobresalen tres cápsulas redondas: arriba
+lisa, al medio el dial de batería "88 %" y abajo el selector de nicotina "N". VOOPOO grande y fino girado
+(se lee de arriba hacia abajo), sabor pequeño a su derecha y boquilla transparente rectangular.
 
 ## Referencias
 
-Fotos de tienda (Vape Station Perú) en `references/`, una por sabor. Tres cuartos frontal, sin caja.
+- `references/`: fotos de tienda (Vape Station Perú), una por sabor.
+- Vistas extra: banner de Vape Station con la trasera, y tres cuartos de otras tiendas.
 
 ## Medidas estimadas (mm)
 
-Sin datos oficiales. Proporciones de las fotos y de la gama (≈ 98 × 50 × 24).
+Sin datos oficiales fiables. Proporciones de las fotos, ancho total 47 como referencia.
 
 | Parte | Valor |
 | --- | --- |
-| Cuerpo | 49 × 24 × 92 (ancho × grosor × alto), esquinas de 11 |
-| Módulo negro | 30 % del ancho frontal, envuelve el canto izquierdo |
-| Dial de pantalla | 9 × 9 redondo, a 52 mm |
-| Boquilla | 12 × 8 × 6 |
+| Cuerpo | 45 × 24 × 89, esquinas de 8 |
+| Cápsulas | radios 9.6 / 9.2 / 9.2, centros a 70 / 49 / 28 |
+| Boquilla | 11.5 × 8 × 10 |
 | Total | ≈ 98 |
-
-## Pendiente
-
-- El módulo negro real sobresale del cuerpo y tiene dos diales con relieve; aquí es una franja pintada
-  con una sola pantalla redonda.

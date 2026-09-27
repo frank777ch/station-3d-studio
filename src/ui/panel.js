@@ -226,6 +226,7 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     mp.add(cfg.mouthpiece, 'depth', 4, 30, 0.5).name('Grosor (mm)');
     mp.add(cfg.mouthpiece, 'offsetX', -20, 20, 0.5).name('Posición X');
     mp.add(cfg.mouthpiece, 'offsetZ', -15, 15, 0.5).name('Posición Z');
+    mp.add(cfg.mouthpiece, 'offsetY', -10, 5, 0.1).name('Posición Y');
     mp.addColor(cfg.mouthpiece, 'color').name('Color');
     mp.add(cfg.mouthpiece, 'translucent').name('Translúcida');
     mp.add(cfg.mouthpiece, 'transmission', 0, 1, 0.01).name('Transmisión');

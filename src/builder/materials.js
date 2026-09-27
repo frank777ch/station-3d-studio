@@ -87,3 +87,37 @@ export function makeLabelMaterial(body, texture, { metallic = false } = {}) {
 export function makeDarkPlasticMaterial(color = '#111111') {
   return new THREE.MeshPhysicalMaterial({ color, roughness: 0.5, clearcoat: 0.2 });
 }
+
+/**
+ * Material para piezas extra: material = 'plastic' | 'glossy' | 'mate' | 'metal' | 'chrome' | 'translucent' | 'rubber'.
+ * emissive / emissiveIntensity opcionales (LEDs).
+ */
+export function makePartMaterial(p) {
+  const color = p.color ?? '#111111';
+  let m;
+  switch (p.material) {
+    case 'glossy':
+    case 'mate':
+      m = makeBodyMaterial({ color, finish: p.material });
+      break;
+    case 'metal':
+      m = new THREE.MeshPhysicalMaterial({ color, metalness: p.metalness ?? 1, roughness: p.roughness ?? 0.35, envMapIntensity: 1.1 });
+      break;
+    case 'chrome':
+      m = makeChromeMaterial({ color, metalness: 1, roughness: p.roughness ?? 0.08 });
+      break;
+    case 'translucent':
+      m = makeMouthpieceMaterial({ color, translucent: true, transmission: p.transmission ?? 0.7, opacity: p.opacity ?? 0.9, thickness: p.thickness ?? 2 });
+      break;
+    case 'rubber':
+      m = new THREE.MeshPhysicalMaterial({ color, roughness: 0.85 });
+      break;
+    default:
+      m = new THREE.MeshPhysicalMaterial({ color, roughness: p.roughness ?? 0.45, clearcoat: p.clearcoat ?? 0.3, metalness: p.metalness ?? 0 });
+  }
+  if (p.emissive) {
+    m.emissive = new THREE.Color(p.emissive);
+    m.emissiveIntensity = p.emissiveIntensity ?? 1.5;
+  }
+  return m;
+}

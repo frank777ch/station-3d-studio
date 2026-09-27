@@ -77,27 +77,39 @@ Todas las medidas en **milímetros**. Ver `src/models/_schema.js` para los valor
 
 | Sección | Campos |
 | --- | --- |
-| `body` | `width`, `depth`, `height`, `cornerRadius`, `edgeRadius`, `color`, `finish` (`glossy` / `mate`), `topSlope` |
+| `body` | `width`, `depth`, `height`, `cornerRadius`, `edgeRadius`, `color`, `finish` (`glossy` / `mate`), `topSlope`; silueta: `profile`, `topRound`, `topChamfer`, `bottomRound`, `bottomChamfer`, `topRoundDepth`, `loft`, `topColor`, `bottomColor` |
 | `frameRing` | `enabled`, `height`, `inset`, `color`, `metalness`, `roughness` |
 | `screenModule` | `enabled`, `height`, `color`, `screen.{width, height, cornerRadius, offsetY, mode, image, emissiveIntensity, data.{battery, boost, iceBoost, accent}}` |
-| `mouthpiece` | `style` (`flat` / `duckbill` / `round` / `dome`), `height`, `width`, `depth`, `color`, `translucent`, `transmission`, `opacity`, `thickness` |
+| `mouthpiece` | `style` (`flat` / `duckbill` / `round` / `dome` / `loft`), `height`, `width`, `depth`, `offsetX`, `offsetY`, `offsetZ`, `color`, `translucent`, `transmission`, `opacity`, `thickness`, `slot`, `slotWidth`, `slotDepth`; con `loft`: `profile`, `cornerRadius`, `edgeRadius`, `topRound`, `topRoundDepth` |
 | `band` | `enabled`, `height`, `color`, `roughness` |
 | `button` | `enabled`, `side` (`left` / `right` / `front`), `width`, `height`, `offsetY`, `color` |
 | `base` | `enabled`, `height`, `inset`, `color` (placa inferior, refills) |
 | `cavity` | `enabled`, `wall`, `floorY`, `color` (cuerpo hueco abierto arriba; con `body.topSlope` la boca queda inclinada) |
 | `ledLogo` | `enabled`, `image`, `color`, `length`, `offsetX`, `offsetY`, `rotation`, `emissiveIntensity` (logo iluminado en la cara frontal) |
 | `frontScreen` | `enabled`, `template` (`boost` / `percent` / `ice` / `boostRow` / `mixpro`), `width`, `height`, `cornerRadius`, `offsetX`, `offsetY`, `data.{battery, liquid, level, boost, accent, flavor}`, `emissiveIntensity` |
+| `extras` | lista de piezas: `{ type: 'box' / 'cylinder' / 'screen', x, y, z, rotation, material, color, ... }` (módulos, diales, perillas, botones, puertos) |
 | `label` | `enabled`, `template` (`gradient` / `wave` / `vertical` / `brush` / `one` / `twoTone` / `pill`), `mode`, `image`, `imageFit` (`front` / `wrap`), `logoImage`, `brand`, `line`, `flavor`, `puffs`, `puffsLabel`, `gradient[]`, `gradientAngle`, `textColor`, `colors.{top, main, bottom, brand, flavorText, puffsText, outline}`, `metallic`, `vertical.{…}`, `brush.{…}`, `one.{…}`, `twoTone.{…}`, `pill.{…}`, `coverage`, `offsetY`, `resolution` |
+
+## Silueta y etiqueta impresa
+
+Si el cuerpo define alguna clave de silueta (`profile`, `topRound`, `topChamfer`, `bottomRound`,
+`bottomChamfer`, `topRoundDepth` o `loft: true`), se construye como un sólido por secciones y la etiqueta
+se imprime directamente sobre él, cubriendo todo el alto. Así salen hombros redondeados (ElfBar BC),
+siluetas octogonales (Rifbar) o placas planas (Life Pod One). Sin esas claves se usa el prisma con manga de
+siempre, y los productos anteriores no cambian.
+
+`profile` es una lista `[[t, sx, sz], ...]`: a la altura relativa `t` (0 base, 1 tope) el ancho y el grosor
+se escalan por `sx` y `sz`. La boquilla con `style: 'loft'` acepta las mismas claves.
 
 ## Plantillas de etiqueta
 
 - `gradient`: degradado de N colores con marca, línea y sabor. Para dispositivos como el Eco III.
 - `wave`: tres zonas con borde ondulado y filete plateado, logo arriba, sabor al centro, burbuja `10k PUFFS` abajo, acabado foil opcional. Para los refills Eco II.
-- `vertical`: degradado con marca, línea y sabor girados 90°; ranuras y franja lateral opcionales. HQD Ez Bar, ElfBar BC15000, Voopoo Zest.
-- `brush`: fondo claro con brochazos de color inclinados, marca girada y franja oscura a la derecha para la columna de pantalla. ElfBar Ice King.
+- `vertical`: degradado con marca, línea y sabor girados 90° (`readUp` para leer de abajo hacia arriba), con posición, tamaño, peso y espaciado de cada texto; tapa en V (`cap`), franja lateral y carcasa trasera con arcos opcionales. HQD Ez Bar, ElfBar BC15000, Voopoo Zest.
+- `brush`: fondo claro con brochazos de pincel seco, marca girada con el símbolo encima y franja de color hacia el costado; `style: 'waves'` dibuja bandas onduladas con espuma. ElfBar Ice King.
 - `one`: placa lisa o metálica (`metallic`) con logo girado, glifo grande en relieve tono sobre tono, sabor sobre el corte y zona inferior negra en diagonal. Life Pod One.
 - `twoTone`: dos colores con corte inclinado y moteado; los textos van en la pantalla. Rifbar MixPro.
-- `pill`: fondo oscuro, texto superior girado y píldora vertical degradada con el sabor. Refill Eco III.
+- `pill`: fondo oscuro, texto superior girado y arco vertical degradado que se ensancha en la base, con contorno y el sabor girado. Refill Eco III.
 
 ## Plantillas de pantalla
 
@@ -106,6 +118,13 @@ Todas las medidas en **milímetros**. Ver `src/models/_schema.js` para los valor
 - `ice`: columna vertical con TURBO y cinco cubitos según `data.level` (Ice King).
 - `boostRow`: fila con rayo, porcentaje, píldora BOOST y copos (Life Pod One).
 - `mixpro`: marca y `data.flavor` girados, panel violeta con `data.liquid` / `data.battery` y tiles NIC / ICE BOOST (Rifbar).
+- `dial`: dial redondo con anillo de segmentos y porcentaje, o `data.icon: 'N'` (Voopoo Zest).
+- `snowflake`: cubo esmerilado con copo de nieve (perilla del Ice King).
+- `levels`: columna TURBO / 25-100 % (costado del BC15000).
+- `digits`: solo un texto grande (`data.text`).
+
+Las pantallas también pueden ir en `extras` (`type: 'screen'`) para ponerlas en costados o sobre otras piezas.
+La pantalla frontal admite `chamfer` (esquinas achaflanadas), `bezel` y `bezelDepth` (marco en relieve).
 
 ## Etiqueta y pantalla: procedural o imagen
 
@@ -158,5 +177,6 @@ sustituir el bloque `http://108.175.12.132` del Caddyfile por el nombre del domi
 ## Render
 
 - `MeshPhysicalMaterial` con envMap PMREM del HDR de estudio.
-- Tone mapping ACESFilmic, salida sRGB.
+- Tone mapping Neutral (Khronos PBR Neutral, pensado para fotos de producto: conserva tono y saturación), salida sRGB.
+- Fuentes de las marcas desde Google Fonts (Montserrat, Quicksand, Rajdhani) con respaldo del sistema.
 - Cuerpo glossy con clearcoat, aro cromado metálico, boquilla con `transmission`, pantalla emisiva por `emissiveMap` de canvas.

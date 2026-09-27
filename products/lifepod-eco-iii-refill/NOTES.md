@@ -1,28 +1,24 @@
 # Life Pod Eco III · Refill 20K
 
-Cápsula intercambiable de 20 000 puffs del Life Pod Eco III. Este producto modela solo el refill;
-el dispositivo es el producto `lifepod-eco-iii`. Cuerpo negro mate alargado con "ICE" girado arriba
-y una píldora vertical con degradado de dos colores en la que va el sabor girado. Boquilla gris
-oscura translúcida.
+Cápsula intercambiable de 20 000 puffs del Life Pod Eco III (el dispositivo es `lifepod-eco-iii`).
+Cuerpo negro alto con un riel gris en el costado derecho: es la parte que entra al lado de la batería,
+sobresale un poco abajo y lleva los contactos dorados. Boquilla gris ancha de canto redondeado, borde
+superior gris y un arco degradado que nace de la base con "ICE" y el sabor girados (se leen de abajo
+hacia arriba).
 
 ## Referencias
 
-Fotos de tienda (Vape Station Perú) en `references/`, una por sabor. Frontal ligeramente girada:
-se ve que la parte trasera es un poco más alta (escalón) que la frontal.
+- `references/`: fotos de tienda (Vape Station Perú), una por sabor.
+- Fotos oficiales (lifepodoficial.com): refill en tres cuartos, sistema desarmado y refill insertado.
 
 ## Medidas estimadas (mm)
 
-Sin datos oficiales. Proporción de la vista frontal: alto ≈ 2.85 × ancho.
+Sin datos oficiales. Proporción de la vista frontal: alto ≈ 4.1 × ancho.
 
 | Parte | Valor |
 | --- | --- |
-| Cuerpo | 26 × 15 × 74 (ancho × grosor × alto) |
-| Base | 2, inset 0.6 |
-| Píldora | 26 % del ancho frontal, del 28 % de la altura hasta la base |
-| Boquilla | 13 × 8 × 7 |
-| Total | ≈ 83 |
-
-## Pendiente
-
-- Escalón trasero (la parte de atrás sube unos 3 mm más que la frontal).
-- Contactos dorados en la base.
+| Cuerpo | 25 × 17 × 102 |
+| Riel | 8.8 × 13 × 104, sobresale 3 mm abajo |
+| Arco | 42 % del ancho frontal, desde el 29.5 % de la altura hasta la base |
+| Boquilla | 18.5 × 12 × 13.5 |
+| Total | ≈ 117 |

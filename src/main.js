@@ -38,6 +38,7 @@ const pedestal = new THREE.Mesh(
   new THREE.MeshPhysicalMaterial({ color: 0x1a1c20, roughness: 0.35, metalness: 0.1, clearcoat: 0.6 }),
 );
 pedestal.position.y = -0.002;
+pedestal.name = 'pedestal';
 scene.add(pedestal);
 
 // ---------- Estado ----------
@@ -143,6 +144,9 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight, false);
 });
+
+// Acceso de depuración (capturas automáticas, consola): cámara, controles y modelo actual.
+window.__studio = { camera, controls, scene, get vape() { return state.vape; }, select: (id) => selectModel(id) };
 
 renderer.setAnimationLoop(() => {
   controls.update();

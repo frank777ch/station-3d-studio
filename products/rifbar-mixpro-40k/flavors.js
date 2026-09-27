@@ -11,7 +11,7 @@ export const FLAVORS = [
   ['peach-mango-pineapple',   'Peach Mango Pineapple',   '#eba73b', '#f0d874', '#ffd96a', '#f8e8a0', 'foto'],
   ['sour-apple-ice',          'Sour Apple Ice',          '#1fc74a', '#12d6b0', '#7fff9a', '#8ff5d8', 'foto'],
   ['triple-berry-ice',        'Triple Berry Ice',        '#8a3fd0', '#3fc8e0', '#d08cf0', '#a0e0f0', 'foto'],
-  ['watermelon-ice',          'Watermelon Ice',          '#e8244a', '#3fd8c8', '#ff6f8a', '#8fe8e0', 'foto'],
+  ['watermelon-ice',          'Watermelon Ice',          '#e8244a', '#3fd8c8', '#ff3d5a', '#8fe8e0', 'foto'],
 ];
 
 export default FLAVORS.map(([slug, name, top, bottom, accent, mouth, src]) =>
@@ -19,10 +19,10 @@ export default FLAVORS.map(([slug, name, top, bottom, accent, mouth, src]) =>
     id: `${base.id}-${slug}`,
     name: `${base.name} · ${name}`,
     notes: src === 'foto' ? 'colores tomados de la foto del producto' : 'colores estimados',
-    body: { color: top },
-    button: { color: bottom },
+    body: { color: top, bottomColor: bottom },
     mouthpiece: { color: mouth },
     frontScreen: { data: { accent, flavor: name } },
     label: { gradient: [top], twoTone: { bottomColor: bottom } },
+    extras: base.extras.map((e) => (e.name === 'nicButton' ? { ...e, color: bottom } : e)),
   }),
 );
