@@ -28,7 +28,7 @@ export default FLAVORS.map(([slug, name, light, mid, src]) =>
     body: { color: light, topColor: light },
     mouthpiece: { color: light },
     label: {
-      vertical: { cap: { y: 0.23, dip: 0.07, color: light, line: 'rgba(255,255,255,0.35)' } },
+      vertical: { cap: { y: 0.19, dip: 0.105, color: light, line: 'rgba(255,255,255,0.3)' } },
       flavor: name.toUpperCase(),
       gradient: [light, mix(light, mid, 0.3), mix(light, mid, 0.7), mid, mix(mid, '#08090c', 0.55), '#0a0b0e', '#060608'],
     },

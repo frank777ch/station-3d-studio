@@ -9,13 +9,22 @@
  */
 const W = 46;
 const D = 15;
-const H = 86.5;
+const H = 84.5;
 const SPLIT_L = 0.185;
 const SPLIT_R = 0.43;
 
-/** Nervios de un costado: parte superior del color de la placa, inferior negra (sigue el corte). */
+/**
+ * Piezas del color de la placa: aro del pozo superior y nervios de los costados (la parte baja de
+ * los nervios es negra, sigue el corte diagonal).
+ */
 export function ribs(upper, material = 'glossy') {
-  const out = [];
+  const out = [
+    // pozo superior: aro del color de la placa y tres escalones negros que bajan hacia la boquilla
+    { name: 'rimOuter', type: 'frame', x: 0, y: H + 1.1, z: 0, width: W + 0.1, depth: D + 0.1, height: 2.2, wall: 1.3, cornerRadius: 1.9, color: upper, material },
+    { name: 'rimStep1', type: 'frame', x: 0, y: H + 0.9, z: 0, width: W - 2.5, depth: D - 2.5, height: 1.8, wall: 1.1, cornerRadius: 1.4, color: '#0b0b0c', material: 'glossy' },
+    { name: 'rimStep2', type: 'frame', x: 0, y: H + 0.65, z: 0, width: W - 4.7, depth: D - 4.7, height: 1.3, wall: 1.1, cornerRadius: 1.1, color: '#121214', material: 'glossy' },
+    { name: 'rimStep3', type: 'frame', x: 0, y: H + 0.4, z: 0, width: W - 6.9, depth: D - 6.9, height: 0.8, wall: 1.1, cornerRadius: 0.8, color: '#0b0b0c', material: 'glossy' },
+  ];
   [[-1, SPLIT_L], [1, SPLIT_R]].forEach(([side, split]) => {
     const cut = H * split;
     [-4.2, 0, 4.2].forEach((z, i) => {
@@ -34,13 +43,13 @@ export default {
 
   body: { width: W, depth: D, height: H, cornerRadius: 1.8, edgeRadius: 0.7, color: '#2a2a2a', finish: 'glossy', loft: true, topColor: '#0c0c0c', bottomColor: '#0c0c0c' },
   base: { enabled: false },
-  frameRing: { enabled: true, height: 1.4, inset: 0.05, color: '#0b0b0b', metalness: 0.2, roughness: 0.25 },
+  frameRing: { enabled: false },
   screenModule: { enabled: false },
   band: { enabled: false },
   button: { enabled: false },
   mouthpiece: {
-    enabled: true, style: 'loft', width: 15, depth: 7.5, height: 12, offsetX: 0, offsetY: 0.6,
-    cornerRadius: 3.7, edgeRadius: 2.6, profile: [[0, 1.05, 1.1], [0.15, 1, 1], [1, 0.95, 0.9]],
+    enabled: true, style: 'loft', width: 15.5, depth: 6.2, height: 15, offsetX: 0, offsetY: 0,
+    cornerRadius: 3, edgeRadius: 2.2, profile: [[0, 1.05, 1.12], [0.15, 1, 1], [1, 0.9, 0.78]],
     color: '#101012', translucent: true, transmission: 0.35, opacity: 0.97, thickness: 3,
     slotWidth: 0.45, slotDepth: 0.3,
   },
@@ -48,13 +57,13 @@ export default {
   frontScreen: {
     enabled: true,
     template: 'boostRow',
-    width: 27,
-    height: 5.2,
+    width: 24,
+    height: 7,
     cornerRadius: 0.3,
     bezel: 0,
-    offsetX: -1,
-    offsetY: 5,
-    data: { battery: 99, boost: true, accent: '#e8e8e8' },
+    offsetX: -2.5,
+    offsetY: 9.1,
+    data: { battery: 99, boost: true, accent: '#ecdcff' },
     emissiveIntensity: 1.4,
   },
 
@@ -73,7 +82,7 @@ export default {
     metallic: false,
     resolution: 2048,
     one: {
-      glyphOpacity: 0.22, glyphSize: 0.45, glyphX: -0.05, glyphY: 0.37, glyphLine: 0.006,
+      glyphOpacity: 0.22, glyphSize: 0.5, glyphX: -0.04, glyphY: 0.41, glyphLine: 0.006,
       splitLeft: SPLIT_L, splitRight: SPLIT_R, bottomColor: '#0b0b0b',
       logoX: 0.11, logoLen: 0.26, logoBottom: 0.31, readUp: true,
       flavorSize: 0.02, flavorAt: 0.74, sideStripes: 0, lineSize: 0.4, lineOffset: 0.3,
@@ -81,9 +90,6 @@ export default {
   },
 
   extras: [
-    // marco escalonado del pozo superior
-    { name: 'wellRim', type: 'box', x: 0, y: H + 1.4 + 0.5, z: 0, width: W - 2.6, height: 1.0, depth: D - 2.6, cornerRadius: 1.2, edgeRadius: 0.35, color: '#0a0a0a', material: 'glossy' },
-    { name: 'wellRim2', type: 'box', x: 0, y: H + 1.4 + 1.2, z: 0, width: W - 6, height: 0.6, depth: D - 5, cornerRadius: 1, edgeRadius: 0.25, color: '#050505', material: 'glossy' },
     ...ribs('#2e2e2e'),
   ],
 };

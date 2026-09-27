@@ -348,7 +348,7 @@ export function loftGeometry({
     const s = section(Math.min(height, Math.max(0, y)));
     const hw = Math.max(0.05, s.w / 2 - inset);
     const hd = Math.max(0.05, s.d / 2 - inset);
-    const pts = ringPoints(hw, hd, Math.max(0.01, s.r - inset), segmentsPerCorner);
+    const pts = ringPoints(hw, hd, Math.max(0.01, s.r - inset), segmentsPerCorner).map(([x, z]) => [x + (s.cx ?? 0), z]);
     n = pts.length;
     const lens = [0];
     for (let i = 1; i < n; i++) lens.push(lens[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
@@ -379,7 +379,8 @@ export function loftGeometry({
       uvs.push(0.5 + x / 200, 0.5 + z / 200);
     });
     const center = positions.length / 3;
-    positions.push(0, level.y, 0);
+    const ccx = level.pts.reduce((a, [x]) => a + x, 0) / level.pts.length;
+    positions.push(ccx, level.y, 0);
     uvs.push(0.5, 0.5);
     for (let i = 0; i < n - 1; i++) {
       if (up) capIdx.push(base + i, base + i + 1, center);
@@ -460,6 +461,7 @@ export function shapeSection({
   topRound = 0, topChamfer = 0, bottomRound = 0, bottomChamfer = 0,
   topChamferX = null, bottomChamferX = null,
   topRoundDepth = 0, bottomRoundDepth = 0,
+  topRoundL = 0, topRoundR = 0,
 }) {
   const H = height;
   // chaflán: topChamfer = alto (mm) que ocupa; topChamferX = cuánto entra en horizontal (por defecto igual, 45°)
@@ -474,16 +476,21 @@ export function shapeSection({
     let d = depth * sz;
     w -= 2 * (inset(H - y, topRound, 'round') + inset(H - y, topChamfer, 'chamfer', topChamferX)
       + inset(y, bottomRound, 'round') + inset(y, bottomChamfer, 'chamfer', bottomChamferX));
+    // hombros asimétricos (vista frontal): radios distintos a izquierda y derecha, el centro se corre
+    const iL = inset(H - y, topRoundL, 'round');
+    const iR = inset(H - y, topRoundR, 'round');
+    w -= iL + iR;
+    const cx = (iL - iR) / 2;
     d -= 2 * (inset(H - y, topRoundDepth, 'round') + inset(y, bottomRoundDepth, 'round'));
     w = Math.max(0.2, w);
     d = Math.max(0.2, d);
     const r = Math.min(cornerRadius * Math.min(sx, sz), w / 2, d / 2);
-    return { w, d, r };
+    return { w, d, r, cx };
   };
   const samples = [];
   (profile ?? []).forEach(([t]) => samples.push(t * H));
   const dense = (from, to, n = 14) => { for (let i = 0; i <= n; i++) samples.push(from + ((to - from) * i) / n); };
-  const topZ = Math.max(topRound, topChamfer, topRoundDepth);
+  const topZ = Math.max(topRound, topChamfer, topRoundDepth, topRoundL, topRoundR);
   const botZ = Math.max(bottomRound, bottomChamfer, bottomRoundDepth);
   if (topZ > 0) dense(H - topZ, H);
   if (botZ > 0) dense(0, botZ);
@@ -495,7 +502,7 @@ export function shapeSection({
 /** ¿El cuerpo usa silueta (loft con etiqueta impresa) en vez de prisma + manga? */
 export function isLoftShape(b) {
   return !!(b.loft || (b.profile && b.profile.length) || b.topRound || b.topChamfer || b.bottomRound
-    || b.bottomChamfer || b.topRoundDepth || b.bottomRoundDepth);
+    || b.bottomChamfer || b.topRoundDepth || b.bottomRoundDepth || b.topRoundL || b.topRoundR);
 }
 
 /**

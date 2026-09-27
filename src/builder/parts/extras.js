@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { roundedPrism, roundedPlane, loftGeometry, shapeSection, chamferRectShape, shapePlane } from '../utils/roundedBox.js';
+import { roundedPrism, roundedPlane, loftGeometry, shapeSection, chamferRectShape, shapePlane, hollowPrism } from '../utils/roundedBox.js';
 import { makePartMaterial, makeScreenMaterial } from '../materials.js';
 import { makeScreenTexture } from '../textures/makeScreen.js';
 
@@ -11,6 +11,7 @@ const DEG = Math.PI / 180;
  *   y se mide desde la base del cuerpo; x, y, z son el CENTRO de la pieza (mm).
  *   type 'box':      width, height, depth, cornerRadius, edgeRadius (+ profile / topRound... como el cuerpo)
  *   type 'cylinder': radius, length, axis ('x' | 'y' | 'z'), edgeRadius
+ *   type 'frame':    anillo hueco: width, depth, height, wall, cornerRadius (marcos, pozos escalonados)
  *   type 'screen':   width, height, cornerRadius | chamfer, screen: { template, data, emissiveIntensity }
  *                    (plano mirando a +z; se orienta con rotation)
  */
@@ -35,6 +36,15 @@ export function buildExtras(cfg, L, opts = {}) {
 function buildPart(p) {
   if (p.type === 'screen') return buildScreen(p);
   let geo;
+  if (p.type === 'frame') {
+    // anillo hueco (marco): contorno exterior width × depth, pared `wall`, alto `height`
+    const h = p.height ?? 1;
+    geo = hollowPrism({ width: p.width ?? 10, depth: p.depth ?? 10, height: h, cornerRadius: p.cornerRadius ?? 1, wall: p.wall ?? 1 });
+    geo.translate(0, -h / 2, 0);
+    const m = makePartMaterial(p);
+    m.side = THREE.DoubleSide;
+    return new THREE.Mesh(geo, m);
+  }
   if (p.type === 'cylinder') {
     const r = p.radius ?? 3;
     const len = p.length ?? 2;

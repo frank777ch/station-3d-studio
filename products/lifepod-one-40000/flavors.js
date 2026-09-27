@@ -46,7 +46,7 @@ export default FLAVORS.map(([finish, slug, name, src]) =>
     name: `${base.name} ${FINISH[finish].name} · ${name}`,
     notes: src === 'foto' ? 'colores tomados de la foto del producto' : 'colores estimados',
     body: FINISH[finish].body,
-    extras: [...base.extras.filter((e) => !e.name.startsWith('rib')), ...ribs(...FINISH[finish].ribs)],
+    extras: [...base.extras.filter((e) => !/^ri[bm]/.test(e.name)), ...ribs(...FINISH[finish].ribs)],
     label: { ...FINISH[finish].label, flavor: name.toUpperCase() },
   }),
 );

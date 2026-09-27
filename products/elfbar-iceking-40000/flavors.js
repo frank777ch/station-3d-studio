@@ -5,7 +5,10 @@
  * claros sobre fondo de color.
  */
 import { defineVariant } from '../../src/models/_schema.js';
+import * as THREE from 'three';
 import base, { sideParts } from './base.js';
+
+const darken = (c, k) => `#${new THREE.Color(c).lerp(new THREE.Color('#000000'), k).getHexString()}`;
 
 // prettier-ignore
 export const FLAVORS = [
@@ -33,7 +36,7 @@ export default FLAVORS.map(([slug, name, colors, band, src, background = '#f3f1e
     body: { color: background },
     label: {
       flavor: name.replace(/^Summer Edition · /, '').toUpperCase(),
-      brush: { background, colors, stripColor: band, style, brandColor: style === 'waves' ? band : colors[0] },
+      brush: { background, colors, stripColor: band, style, brandColor: style === 'waves' ? band : darken(colors[0], 0.18) },
     },
     extras: sideParts(band),
   }),

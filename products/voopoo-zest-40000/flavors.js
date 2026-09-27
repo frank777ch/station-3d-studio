@@ -18,5 +18,6 @@ export default FLAVORS.map(([slug, name, gradient, textColor, src]) =>
     notes: src === 'foto' ? 'colores tomados de la foto del producto' : 'colores estimados',
     body: { color: gradient[0] },
     label: { flavor: name.toUpperCase(), gradient, textColor, vertical: { arcColor: textColor === '#ffffff' ? gradient[1] : textColor } },
+    extras: base.extras.map((e) => (e.name === 'mouthCore' ? { ...e, color: gradient[1] } : e)),
   }),
 );

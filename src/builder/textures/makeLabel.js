@@ -669,10 +669,11 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
         const n = fi === 0 ? b.strokes : Math.max(1, b.strokes - 1);
         for (let i = 0; i < n; i++) {
           const color = colors[i % colors.length];
-          const cy = H * (0.26 + (0.52 * i) / Math.max(1, n - 1) + (rand() - 0.5) * 0.08);
-          // en la cara frontal los trazos quedan a la derecha de la columna del texto
-          const cx = x0 + w * (fi === 0 ? 0.66 + (rand() - 0.5) * 0.18 : 0.5 + (rand() - 0.5) * 0.3);
-          const len = w * (fi === 0 ? 0.85 + 0.35 * rand() : 1.2 + 0.4 * rand());
+          // banda diagonal: los trazos se escalonan a lo largo de la diagonal (abajo-izquierda → arriba-derecha)
+          const t = n > 1 ? i / (n - 1) : 0.5;
+          const cy = H * (0.78 - 0.5 * t + (rand() - 0.5) * 0.05);
+          const cx = x0 + w * (fi === 0 ? 0.42 + 0.34 * t + (rand() - 0.5) * 0.1 : 0.5 + (rand() - 0.5) * 0.3);
+          const len = w * (fi === 0 ? 0.75 + 0.35 * rand() : 1.2 + 0.4 * rand());
           const thick = H * (0.11 + 0.08 * rand());
           dryBrush(cx, cy, len, thick, angle * (0.8 + rand() * 0.4), color, rand);
         }
@@ -680,10 +681,23 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
       if (b.seams) drawSeams(paintW);
     }
 
-    // franja de color a la derecha de la cara frontal (módulo de pantalla), envuelve el canto
+    // franja de color a la derecha de la cara frontal (banda lateral), envuelve el canto;
+    // arriba forma una joroba redondeada que entra en el frente (donde asoma la perilla)
     if (stripW > 0) {
+      const xb = frontX + paintW;
+      const bump = frontW * (b.stripBump ?? 0);
       ctx.fillStyle = b.stripColor;
-      ctx.fillRect(frontX + paintW, 0, stripW + sideW * 1.05, H);
+      ctx.beginPath();
+      ctx.moveTo(frontX + frontW + sideW * 1.05, 0);
+      ctx.lineTo(xb - bump * 0.6, 0);
+      for (let i = 0; i <= 40; i++) {
+        const y = (H * i) / 40;
+        const k = Math.exp(-((((y / H) - 0.13) / 0.09) ** 2));
+        ctx.lineTo(xb - bump * k, y);
+      }
+      ctx.lineTo(frontX + frontW + sideW * 1.05, H);
+      ctx.closePath();
+      ctx.fill();
     }
 
     // marca girada, en el color principal
@@ -925,6 +939,11 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
     const readUp = p.readUp ?? true;
     const off = frontW * (p.offsetX ?? 0);
     // frontal y trasera (la trasera está partida en el borde: se dibuja en 0 y en W)
+    if (p.bottomBand > 0) {
+      // franja inferior de ancho completo donde terminan los pies del arco
+      ctx.fillStyle = g;
+      ctx.fillRect(0, H * (1 - p.bottomBand), W, H * p.bottomBand + 1);
+    }
     faceCenters.forEach((c0) => {
       const cx = c0 + off;
       pillPath(cx, pw, y0, flare);

@@ -52,6 +52,8 @@ export const DEFAULTS = {
     bottomChamfer: 0,
     bottomChamferX: null,
     topRoundDepth: 0,     // redondeo superior visto de perfil
+    topRoundL: 0,         // hombro izquierdo (radio, vista frontal) distinto del derecho
+    topRoundR: 0,
     bottomRoundDepth: 0,
     edgeRadiusBottom: null, // canto inferior (por defecto = edgeRadius)
     topColor: null,       // color de la tapa superior (por defecto = color)
@@ -248,6 +250,7 @@ export const DEFAULTS = {
       seams: false,                     // líneas blancas en relieve
       readUp: null,                     // null = se lee de abajo hacia arriba
       brandColor: null, brandWeight: null, brandSpacing: null, brandStart: null, brandLen: null, glyphSize: null,
+      stripBump: null,                  // joroba de la franja hacia el frente, arriba (fracción del ancho frontal)
     },
     // template 'one' (placa lisa o metálica con logo vertical, glifo grande tono sobre tono y zona inferior negra en diagonal)
     one: {
@@ -287,6 +290,7 @@ export const DEFAULTS = {
       outline: null,                    // color del contorno
       readUp: null,
       flavorStart: null, flavorSize: null,
+      bottomBand: null,                 // franja inferior de ancho completo (fracción de la altura)
     },
     coverage: 0.7,
     offsetY: 0.08,

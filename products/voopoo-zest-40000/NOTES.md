@@ -13,11 +13,14 @@ lisa, al medio el dial de batería "88 %" y abajo el selector de nicotina "N". V
 
 ## Medidas estimadas (mm)
 
-Sin datos oficiales fiables. Proporciones de las fotos, ancho total 47 como referencia.
+Sin datos oficiales fiables. Medido en píxeles sobre la foto de tienda de 1080 px; ancho 45 como
+referencia.
 
 | Parte | Valor |
 | --- | --- |
 | Cuerpo | 45 × 24 × 89, esquinas de 8 |
-| Cápsulas | radios 9.6 / 9.2 / 9.2, centros a 70 / 49 / 28 |
-| Boquilla | 11.5 × 8 × 10 |
-| Total | ≈ 98 |
+| Carcasa negra | 30 % del frente a la izquierda, costado izquierdo y trasera |
+| Cápsulas | centros a 69.3 / 44.5 / 20.1, radios 9.5 / 7.7 / 9.9 (lisa, dial 88 %, dial N) |
+| Boquilla | 16 × 9 × 13.7, transparente con base del color del cuerpo |
+| Total | ≈ 102 |
+

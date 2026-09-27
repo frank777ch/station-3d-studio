@@ -13,12 +13,15 @@ hacia arriba).
 
 ## Medidas estimadas (mm)
 
-Sin datos oficiales. Proporción de la vista frontal: alto ≈ 4.1 × ancho.
+Sin datos oficiales. Medido en píxeles sobre la foto frontal de tienda de 2400 px; ancho 25 como
+referencia (alto ≈ 3 × ancho).
 
 | Parte | Valor |
 | --- | --- |
-| Cuerpo | 25 × 17 × 102 |
-| Riel | 8.8 × 13 × 104, sobresale 3 mm abajo |
-| Arco | 42 % del ancho frontal, desde el 29.5 % de la altura hasta la base |
-| Boquilla | 18.5 × 12 × 13.5 |
-| Total | ≈ 117 |
+| Cuerpo | 25 × 17 × 74.6, cantos verticales de radio 6 |
+| Riel | 4 × 13 × 75.5, sobresale 4.9 abajo, con tres contactos dorados |
+| Arco | 40 % del ancho, centrado, desde el 37.3 % de la altura; pies de 29 % hasta los bordes |
+| ICE | centrado sobre el arco, al 24 % de la altura |
+| Boquilla | 16.6 × 11 × 11.3 |
+| Total | ≈ 86 |
+

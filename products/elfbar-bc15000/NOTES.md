@@ -13,13 +13,16 @@ espaciado), BC15K y el sabor. En el costado derecho, una pantallita vertical de 
 
 ## Medidas estimadas (mm)
 
-Sin datos oficiales. Proporciones medidas en la foto frontal; el grosor sale de las vistas laterales
-(≈ 0.57 × ancho).
+Sin datos oficiales. Proporciones medidas en píxeles sobre fotos frontales de alta resolución
+(simpsonsvapeshop.com, 1080 × 1350) y la vista del trío con el costado (ofvrbr.com); ancho 46 como
+referencia. El cuerpo mide 1.55 × el ancho y el cuello 0.29 × el ancho.
 
 | Parte | Valor |
 | --- | --- |
-| Cuerpo | 44 × 25 × 81 (ancho × grosor × alto), hombros de radio 9.5 |
-| Cuello | 15.5 × 11 × 16, desplazado 5 mm a la izquierda, se ensancha en la base |
-| Tapa en V | borde a 23 % de la altura desde arriba |
-| Pantalla lateral | 5 × 32, costado derecho |
-| Total | ≈ 95 |
+| Cuerpo | 46 × 26 × 71 (ancho × grosor × alto) |
+| Hombros | izquierdo de radio 10 (se funde con el cuello), derecho de radio 6.4 |
+| Cuello | 16.4 × 11.5, sobresale 13.3, desplazado 7.2 mm a la izquierda |
+| Tapa en V | borde al 19 % de la altura desde arriba, vértice al 29.5 % |
+| Pantalla lateral | 5.6 × 29, costado derecho, centro a 26.6 |
+| Total | ≈ 84 |
+
