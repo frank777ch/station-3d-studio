@@ -15,7 +15,7 @@
  * @property {{style:'flat'|'duckbill'|'round'|'dome', height:number, width:number, depth:number, color:string, translucent:boolean, transmission:number, opacity:number, thickness:number, domeTopX:number, domeTopZ:number, domePinch:number, domeBendHeight:number}} mouthpiece
  * @property {{enabled:boolean, height:number, color:string, roughness:number}} band
  * @property {{enabled:boolean, side:'left'|'right'|'front', width:number, height:number, offsetY:number, color:string}} button
- * @property {{enabled:boolean, template:'gradient'|'wave', mode:'procedural'|'image', image:string|null, imageFit:'front'|'wrap', logoImage:string|null, glyphImage:string|null, brand:string, line:string, flavor:string, puffs:string, puffsLabel:string, gradient:string[], gradientAngle:number, textColor:string, colors:{top:string, main:string, bottom:string, brand:string, flavorText:string, puffsText:string, outline:string}, metallic:boolean, coverage:number, offsetY:number, resolution:number}} label
+ * @property {{enabled:boolean, template:'gradient'|'wave'|'vertical'|'brush'|'one'|'twoTone'|'pill', mode:'procedural'|'image', image:string|null, imageFit:'front'|'wrap', logoImage:string|null, glyphImage:string|null, brand:string, line:string, flavor:string, puffs:string, puffsLabel:string, gradient:string[], gradientAngle:number, textColor:string, colors:{top:string, main:string, bottom:string, brand:string, flavorText:string, puffsText:string, outline:string}, metallic:boolean, coverage:number, offsetY:number, resolution:number}} label
  */
 
 export const FINISHES = ['glossy', 'mate'];
@@ -23,8 +23,8 @@ export const MOUTHPIECE_STYLES = ['flat', 'duckbill', 'round', 'dome'];
 export const BUTTON_SIDES = ['left', 'right', 'front'];
 export const TEXTURE_MODES = ['procedural', 'image'];
 export const IMAGE_FITS = ['front', 'wrap'];
-export const LABEL_TEMPLATES = ['gradient', 'wave', 'vertical'];
-export const SCREEN_TEMPLATES = ['boost', 'percent'];
+export const LABEL_TEMPLATES = ['gradient', 'wave', 'vertical', 'brush', 'one', 'twoTone', 'pill'];
+export const SCREEN_TEMPLATES = ['boost', 'percent', 'ice', 'boostRow', 'mixpro'];
 
 /** @type {VapeConfig} */
 export const DEFAULTS = {
@@ -72,7 +72,7 @@ export const DEFAULTS = {
     offsetY: 9,
     mode: 'procedural',
     image: null,
-    data: { battery: 99, boost: false, iceBoost: false, accent: '#37d67a' },
+    data: { battery: 99, liquid: 99, level: 3, boost: false, iceBoost: false, accent: '#37d67a', flavor: '' },
     emissiveIntensity: 1.8,
   },
 
@@ -106,9 +106,12 @@ export const DEFAULTS = {
       image: null,
       data: {
         battery: 82,
+        liquid: 99,       // % de líquido (plantillas 'mixpro')
+        level: 3,         // nivel de frío 0..5 (plantilla 'ice')
         boost: true,
         iceBoost: false,
         accent: '#37d67a',
+        flavor: '',       // texto de sabor en pantalla (plantilla 'mixpro')
       },
       emissiveIntensity: 1.6,
     },
@@ -185,6 +188,44 @@ export const DEFAULTS = {
       lineX: 0.2,           // posición de la línea/sub-marca
       flavorX: -0.34,       // posición del sabor
       grooves: 0,           // líneas verticales sutiles (0 = ninguna)
+      stripWidth: 0,        // franja oscura a la izquierda de la cara frontal (fracción del ancho frontal, 0 = ninguna)
+      stripColor: '#0a0a0a',
+    },
+    // template 'brush' (fondo claro con brochazos de color, estilo ElfBar Ice King)
+    brush: {
+      background: '#f3f1ee',
+      colors: ['#c8102e', '#f3a07a'],   // brochazos, del más intenso al más claro
+      angle: 62,                        // inclinación de los brochazos (grados)
+      strokes: 3,
+      brandX: -0.30,                    // posición del texto de marca girado (fracción del ancho frontal)
+      brandSize: 0.16,
+      stripWidth: 0.22,                 // franja oscura a la derecha de la cara frontal (fracción, 0 = ninguna)
+      stripColor: '#1a1a1a',
+    },
+    // template 'one' (placa lisa o metálica con logo vertical, glifo grande tono sobre tono y zona inferior negra en diagonal)
+    one: {
+      glyphOpacity: 0.22,
+      glyphSize: 0.28,                  // alto del glifo (fracción de la altura de etiqueta)
+      splitLeft: 0.36,                  // altura donde empieza la zona negra en el borde izquierdo (fracción)
+      splitRight: 0.22,                 // ... y en el borde derecho
+      bottomColor: '#0a0a0a',
+      flavorSize: 0.022,
+    },
+    // template 'twoTone' (cuerpo de dos colores con corte inclinado, estilo Rifbar MixPro)
+    twoTone: {
+      bottomColor: '#3fd8c8',
+      splitLeft: 0.27,                  // altura del corte en el borde izquierdo (fracción)
+      splitRight: 0.20,                 // altura del corte en el borde derecho
+      speckle: 0.35,                    // moteado sutil (0 = ninguno)
+    },
+    // template 'pill' (fondo oscuro con píldora vertical degradada y sabor girado, estilo refill Eco III)
+    pill: {
+      background: '#141414',
+      tag: 'ICE',
+      width: 0.26,                      // ancho de la píldora (fracción del ancho frontal)
+      top: 0.28,                        // borde superior de la píldora (fracción de la altura)
+      bottom: 0.985,
+      tagColor: '#d8d8d8',
     },
     coverage: 0.7,
     offsetY: 0.08,

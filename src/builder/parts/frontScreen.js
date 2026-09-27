@@ -10,9 +10,11 @@ export function buildFrontScreen(cfg, L) {
   const group = new THREE.Group();
   group.name = 'frontScreen';
 
+  // La manga de la etiqueta va 0.2 mm por delante del cuerpo: la pantalla debe quedar por delante de ella.
+  const z = b.depth / 2 + (cfg.label.enabled ? 0.34 : 0.06);
   const { texture, ready } = makeScreenTexture(s, { aspect: s.height / s.width });
   const screen = new THREE.Mesh(roundedPlane(s.width, s.height, s.cornerRadius), makeScreenMaterial(s, texture));
-  screen.position.set(s.offsetX, L.bodyY + s.offsetY, b.depth / 2 + 0.06);
+  screen.position.set(s.offsetX, L.bodyY + s.offsetY, z);
   group.add(screen);
 
   const bezel = new THREE.Mesh(

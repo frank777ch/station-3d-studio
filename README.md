@@ -16,6 +16,7 @@ Sin el HDR el studio funciona igual con `RoomEnvironment` como entorno de respal
 
 ## Uso
 
+- **Catálogo**: panel izquierdo con buscador, agrupado por producto. La URL guarda el modelo (`#id`).
 - **Modelo**: dropdown arriba del panel. Cambia entre los configs registrados en `src/models/index.js`.
 - **Carpetas**: editan el config en vivo y reconstruyen el modelo.
 - **Exportar .glb**: descarga el modelo actual en metros (1 mm = 0.001 m). Abre a escala real en Blender.
@@ -36,7 +37,18 @@ products/
     base.js, NOTES.md, references/, index.js
   lifepod-eco-iii/
     base.js, flavors/, index.js
+  lifepod-eco-iii-refill/   12 sabores, plantilla 'pill'
+  lifepod-one-40000/        Carbon (5) y Gold (3), plantilla 'one' + pantalla 'boostRow'
+  hqd-ez-bar-1500/          10 sabores, plantilla 'vertical'
+  elfbar-bc15000/           8 sabores, plantilla 'vertical'
+  elfbar-iceking-40000/     14 sabores, plantilla 'brush' + pantalla 'ice'
+  rifbar-mixpro-40k/        8 sabores, plantilla 'twoTone' + pantalla 'mixpro'
+  voopoo-zest-40000/        5 sabores, plantilla 'vertical' con franja lateral
 ```
+
+Todos los productos salen del catálogo de [Vape Station Perú](https://vapestation.pe/c/desechables/);
+cada carpeta guarda en `NOTES.md` las medidas estimadas y una foto por sabor en `references/`.
+Quedan sin modelar el Life Pod SK 15000 (tanque transparente) y el Voopoo Max 16000 (kit + pods).
 
 Un sabor del refill es una línea en `flavors.js` con la zona superior y la central; el resto se deriva
 (logo del color de la zona central, zona inferior aclarada, textos en blanco):
@@ -74,13 +86,26 @@ Todas las medidas en **milímetros**. Ver `src/models/_schema.js` para los valor
 | `base` | `enabled`, `height`, `inset`, `color` (placa inferior, refills) |
 | `cavity` | `enabled`, `wall`, `floorY`, `color` (cuerpo hueco abierto arriba; con `body.topSlope` la boca queda inclinada) |
 | `ledLogo` | `enabled`, `image`, `color`, `length`, `offsetX`, `offsetY`, `rotation`, `emissiveIntensity` (logo iluminado en la cara frontal) |
-| `frontScreen` | `enabled`, `template` (`boost` / `percent`), `width`, `height`, `offsetX`, `offsetY`, `data.battery`, `emissiveIntensity` |
-| `label` | `enabled`, `template` (`gradient` / `wave`), `mode`, `image`, `imageFit` (`front` / `wrap`), `logoImage`, `brand`, `line`, `flavor`, `puffs`, `puffsLabel`, `gradient[]`, `gradientAngle`, `textColor`, `colors.{top, main, bottom, brand, flavorText, puffsText, outline}`, `metallic`, `coverage`, `offsetY`, `resolution` |
+| `frontScreen` | `enabled`, `template` (`boost` / `percent` / `ice` / `boostRow` / `mixpro`), `width`, `height`, `cornerRadius`, `offsetX`, `offsetY`, `data.{battery, liquid, level, boost, accent, flavor}`, `emissiveIntensity` |
+| `label` | `enabled`, `template` (`gradient` / `wave` / `vertical` / `brush` / `one` / `twoTone` / `pill`), `mode`, `image`, `imageFit` (`front` / `wrap`), `logoImage`, `brand`, `line`, `flavor`, `puffs`, `puffsLabel`, `gradient[]`, `gradientAngle`, `textColor`, `colors.{top, main, bottom, brand, flavorText, puffsText, outline}`, `metallic`, `vertical.{…}`, `brush.{…}`, `one.{…}`, `twoTone.{…}`, `pill.{…}`, `coverage`, `offsetY`, `resolution` |
 
 ## Plantillas de etiqueta
 
 - `gradient`: degradado de N colores con marca, línea y sabor. Para dispositivos como el Eco III.
 - `wave`: tres zonas con borde ondulado y filete plateado, logo arriba, sabor al centro, burbuja `10k PUFFS` abajo, acabado foil opcional. Para los refills Eco II.
+- `vertical`: degradado con marca, línea y sabor girados 90°; ranuras y franja lateral opcionales. HQD Ez Bar, ElfBar BC15000, Voopoo Zest.
+- `brush`: fondo claro con brochazos de color inclinados, marca girada y franja oscura a la derecha para la columna de pantalla. ElfBar Ice King.
+- `one`: placa lisa o metálica (`metallic`) con logo girado, glifo grande en relieve tono sobre tono, sabor sobre el corte y zona inferior negra en diagonal. Life Pod One.
+- `twoTone`: dos colores con corte inclinado y moteado; los textos van en la pantalla. Rifbar MixPro.
+- `pill`: fondo oscuro, texto superior girado y píldora vertical degradada con el sabor. Refill Eco III.
+
+## Plantillas de pantalla
+
+- `boost` (módulo de pantalla): batería, porcentaje y píldoras BOOST / ICE.
+- `percent`: porcentaje grande con tres barritas (batería Eco II, BC15000, Zest).
+- `ice`: columna vertical con TURBO y cinco cubitos según `data.level` (Ice King).
+- `boostRow`: fila con rayo, porcentaje, píldora BOOST y copos (Life Pod One).
+- `mixpro`: marca y `data.flavor` girados, panel violeta con `data.liquid` / `data.battery` y tiles NIC / ICE BOOST (Rifbar).
 
 ## Etiqueta y pantalla: procedural o imagen
 

@@ -25,7 +25,7 @@ export function buildLedLogo(cfg, L) {
     roughness: 0.4,
   });
   const plane = new THREE.Mesh(new THREE.PlaneGeometry(led.length, led.length), mat);
-  plane.position.set(led.offsetX, L.bodyY + led.offsetY, b.depth / 2 + 0.08);
+  plane.position.set(led.offsetX, L.bodyY + led.offsetY, b.depth / 2 + (cfg.label.enabled ? 0.36 : 0.08));
   plane.rotation.z = (led.rotation * Math.PI) / 180;
   group.add(plane);
 

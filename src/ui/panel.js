@@ -53,8 +53,8 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     };
 
     const body = f('Cuerpo', true);
-    body.add(cfg.body, 'width', 14, 40, 0.5).name('Ancho (mm)');
-    body.add(cfg.body, 'depth', 8, 30, 0.5).name('Grosor (mm)');
+    body.add(cfg.body, 'width', 14, 60, 0.5).name('Ancho (mm)');
+    body.add(cfg.body, 'depth', 8, 35, 0.5).name('Grosor (mm)');
     body.add(cfg.body, 'height', 40, 140, 1).name('Alto (mm)');
     body.add(cfg.body, 'cornerRadius', 0.5, 15, 0.1).name('Radio esquinas');
     body.add(cfg.body, 'edgeRadius', 0, 6, 0.1).name('Radio cantos');
@@ -82,11 +82,16 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
     const fs = f('Pantalla frontal');
     fs.add(cfg.frontScreen, 'enabled').name('Visible');
     fs.add(cfg.frontScreen, 'template', SCREEN_TEMPLATES).name('Plantilla');
-    fs.add(cfg.frontScreen, 'width', 3, 30, 0.5).name('Ancho (mm)');
-    fs.add(cfg.frontScreen, 'height', 2, 20, 0.5).name('Alto (mm)');
-    fs.add(cfg.frontScreen, 'offsetX', -20, 20, 0.5).name('Posición X');
+    fs.add(cfg.frontScreen, 'width', 3, 45, 0.5).name('Ancho (mm)');
+    fs.add(cfg.frontScreen, 'height', 2, 70, 0.5).name('Alto (mm)');
+    fs.add(cfg.frontScreen, 'cornerRadius', 0, 8, 0.1).name('Radio');
+    fs.add(cfg.frontScreen, 'offsetX', -25, 25, 0.5).name('Posición X');
     fs.add(cfg.frontScreen, 'offsetY', 0, 120, 0.5).name('Posición Y');
     fs.add(cfg.frontScreen.data, 'battery', 0, 100, 1).name('Batería %');
+    fs.add(cfg.frontScreen.data, 'liquid', 0, 100, 1).name('Líquido %');
+    fs.add(cfg.frontScreen.data, 'level', 0, 5, 1).name('Nivel frío');
+    fs.add(cfg.frontScreen.data, 'boost').name('Boost');
+    fs.add(cfg.frontScreen.data, 'flavor').name('Sabor en pantalla');
     fs.addColor(cfg.frontScreen.data, 'accent').name('Color acento');
     fs.add(cfg.frontScreen, 'emissiveIntensity', 0, 5, 0.1).name('Brillo');
 
@@ -120,6 +125,44 @@ export function createPanel({ modelOptions, initialId, getConfig, onSelect, onCh
       vf.add(cfg.label.vertical, 'lineX', -0.5, 0.5, 0.01).name('Línea X');
       vf.add(cfg.label.vertical, 'flavorX', -0.5, 0.5, 0.01).name('Sabor X');
       vf.add(cfg.label.vertical, 'grooves', 0, 8, 1).name('Ranuras');
+      vf.add(cfg.label.vertical, 'stripWidth', 0, 0.6, 0.01).name('Franja izq.');
+      vf.addColor(cfg.label.vertical, 'stripColor').name('Color franja');
+    }
+    if (cfg.label.template === 'brush') {
+      const bf = label.addFolder('Brochazos');
+      bf.addColor(cfg.label.brush, 'background').name('Fondo');
+      cfg.label.brush.colors.forEach((_, i) => bf.addColor(cfg.label.brush.colors, i).name(`Brochazo ${i + 1}`));
+      bf.add(cfg.label.brush, 'angle', 0, 180, 1).name('Ángulo');
+      bf.add(cfg.label.brush, 'strokes', 1, 8, 1).name('Cantidad');
+      bf.add(cfg.label.brush, 'brandX', -0.5, 0.5, 0.01).name('Marca X');
+      bf.add(cfg.label.brush, 'brandSize', 0.05, 0.4, 0.01).name('Tamaño marca');
+      bf.add(cfg.label.brush, 'stripWidth', 0, 0.5, 0.01).name('Franja der.');
+      bf.addColor(cfg.label.brush, 'stripColor').name('Color franja');
+    }
+    if (cfg.label.template === 'one') {
+      const of = label.addFolder('Placa');
+      of.add(cfg.label.one, 'glyphOpacity', 0, 1, 0.01).name('Relieve glifo');
+      of.add(cfg.label.one, 'glyphSize', 0.05, 0.6, 0.01).name('Tamaño glifo');
+      of.add(cfg.label.one, 'splitLeft', 0, 0.8, 0.01).name('Corte izq.');
+      of.add(cfg.label.one, 'splitRight', 0, 0.8, 0.01).name('Corte der.');
+      of.addColor(cfg.label.one, 'bottomColor').name('Zona inferior');
+      of.add(cfg.label, 'metallic').name('Acabado metálico');
+    }
+    if (cfg.label.template === 'twoTone') {
+      const tf = label.addFolder('Dos tonos');
+      tf.addColor(cfg.label.twoTone, 'bottomColor').name('Color inferior');
+      tf.add(cfg.label.twoTone, 'splitLeft', 0, 0.8, 0.01).name('Corte izq.');
+      tf.add(cfg.label.twoTone, 'splitRight', 0, 0.8, 0.01).name('Corte der.');
+      tf.add(cfg.label.twoTone, 'speckle', 0, 1, 0.01).name('Moteado');
+    }
+    if (cfg.label.template === 'pill') {
+      const pf = label.addFolder('Píldora');
+      pf.addColor(cfg.label.pill, 'background').name('Fondo');
+      pf.add(cfg.label.pill, 'tag').name('Texto superior');
+      pf.addColor(cfg.label.pill, 'tagColor').name('Color texto sup.');
+      pf.add(cfg.label.pill, 'width', 0.05, 0.6, 0.01).name('Ancho');
+      pf.add(cfg.label.pill, 'top', 0, 0.9, 0.01).name('Inicio');
+      pf.add(cfg.label.pill, 'bottom', 0.1, 1, 0.01).name('Fin');
     }
     const logoImg = { image: cfg.label.logoImage ?? '' };
     label.add(logoImg, 'image').name('Logo PNG (public/)').onChange((v) => { cfg.label.logoImage = v.trim() || null; });

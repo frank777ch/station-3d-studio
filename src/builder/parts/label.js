@@ -20,7 +20,7 @@ export function buildLabel(cfg, L, { anisotropy } = {}) {
     sideFraction: geo.userData.sideFraction,
     anisotropy,
   });
-  const metallic = cfg.label.template === 'wave' && cfg.label.metallic;
+  const metallic = ['wave', 'one'].includes(cfg.label.template) && cfg.label.metallic;
   const mesh = new THREE.Mesh(geo, makeLabelMaterial(b, texture, { metallic }));
   mesh.name = 'label';
   mesh.userData.ready = ready;

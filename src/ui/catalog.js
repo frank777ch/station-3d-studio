@@ -27,6 +27,13 @@ export function createCatalog({ models, initialId, onSelect }) {
     if (!l.enabled) return `linear-gradient(135deg, ${m.body?.color ?? '#222'}, #444)`;
     if (l.template === 'wave' && l.colors) return `linear-gradient(180deg, ${l.colors.top} 0 40%, ${l.colors.main} 40% 85%, ${l.colors.bottom} 85%)`;
     const g = l.gradient?.length ? l.gradient : ['#444', '#999'];
+    if (l.template === 'brush' && l.brush) {
+      const c = l.brush.colors ?? [];
+      return `linear-gradient(160deg, ${l.brush.background ?? '#eee'} 0 20%, ${c[0] ?? '#c00'} 20% 55%, ${c[1] ?? c[0] ?? '#f88'} 55% 80%, ${l.brush.background ?? '#eee'} 80%)`;
+    }
+    if (l.template === 'twoTone' && l.twoTone) return `linear-gradient(180deg, ${g[0]} 0 72%, ${l.twoTone.bottomColor} 72%)`;
+    if (l.template === 'one' && l.one) return `linear-gradient(180deg, ${g.join(', ')} 70%, ${l.one.bottomColor} 70%)`;
+    if (l.template === 'pill' && l.pill) return `linear-gradient(90deg, ${l.pill.background} 0 30%, ${g[0]} 30% 70%, ${l.pill.background} 70%)`;
     return `linear-gradient(180deg, ${g.join(', ')})`;
   }
 
