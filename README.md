@@ -139,6 +139,12 @@ public/
 
 El archivo `.env` (claves de API) está en `.gitignore` y no se usa en la app.
 
+## Publicar en GitHub Pages
+
+El flujo `.github/workflows/pages.yml` compila y publica `dist/` en cada push a `main` (o a mano desde
+la pestaña **Actions**). Solo hay que activarlo una vez en el repo: **Settings → Pages → Source:
+GitHub Actions**. La web queda en `https://<usuario>.github.io/station-3d-studio/`.
+
 ## Publicar en el VPS
 
 ```bash
