@@ -146,7 +146,13 @@ window.addEventListener('resize', () => {
 });
 
 // Acceso de depuración (capturas automáticas, consola): cámara, controles y modelo actual.
-window.__studio = { camera, controls, scene, get vape() { return state.vape; }, select: (id) => selectModel(id) };
+window.__studio = {
+  camera, controls, scene, models: MODELS,
+  get vape() { return state.vape; },
+  select: (id) => selectModel(id),
+  /** Carga un config arbitrario (variantes de prueba sin tocar el catálogo). */
+  load: (config) => { state.config = mergeWithDefaults(config); rebuild(); },
+};
 
 renderer.setAnimationLoop(() => {
   controls.update();

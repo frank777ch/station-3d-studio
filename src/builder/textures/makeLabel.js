@@ -498,16 +498,17 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
     return { yL, yR };
   }
 
-  /** Moteado sutil (plástico con partículas). */
-  function drawSpeckle(amount, seed = 7) {
+  /** Moteado (plástico con partículas): mayoría de motas claras y algunas oscuras. */
+  function drawSpeckle(amount, seed = 7, light = 'rgba(255,255,255,0.8)') {
     if (amount <= 0) return;
     const rand = rng(seed);
-    const n = Math.round(W * H * 0.0012 * amount);
+    const n = Math.round(W * H * 0.0006 * amount);
+    const scale = W / 1024;
     for (let i = 0; i < n; i++) {
       const x = rand() * W;
       const y = rand() * H;
-      const r = 0.6 + rand() * 1.4;
-      ctx.fillStyle = rand() > 0.5 ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)';
+      const r = (0.45 + rand() * rand() * 1.6) * scale;
+      ctx.fillStyle = rand() > 0.18 ? light : 'rgba(40,20,60,0.45)';
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
@@ -849,13 +850,47 @@ export function makeLabelTexture(label, { aspect, frontFraction, sideFraction = 
     const t = label.twoTone;
     drawGradient();
     fillSlantedBottom(t.splitLeft, t.splitRight, t.bottomColor);
-    drawSpeckle(t.speckle, 42);
+    const backW = W - frontW - 2 * sideW;
+    // la trasera está partida en la costura (u = 0 / 1): se dibuja centrada en 0 y en W
+    const onBack = (fn) => [0, W].forEach((cx) => { ctx.save(); ctx.translate(cx, 0); fn(); ctx.restore(); });
+    if (t.backPanel) {
+      // panel en relieve: contorno achaflanado con muescas, un poco más claro
+      onBack(() => {
+        const pw = backW * 0.8, ph = H * 0.84, c = pw * 0.14, nt = pw * 0.36, nb = pw * 0.24, nd = H * 0.03;
+        const x0 = -pw / 2, y0 = H * 0.08;
+        ctx.beginPath();
+        ctx.moveTo(x0 + c, y0);
+        ctx.lineTo(-nt / 2, y0); ctx.lineTo(-nb / 2, y0 + nd); ctx.lineTo(nb / 2, y0 + nd); ctx.lineTo(nt / 2, y0);
+        ctx.lineTo(x0 + pw - c, y0); ctx.lineTo(x0 + pw, y0 + c);
+        ctx.lineTo(x0 + pw, y0 + ph - c); ctx.lineTo(x0 + pw - c, y0 + ph);
+        ctx.lineTo(nt / 2, y0 + ph); ctx.lineTo(nb / 2, y0 + ph - nd); ctx.lineTo(-nb / 2, y0 + ph - nd); ctx.lineTo(-nt / 2, y0 + ph);
+        ctx.lineTo(x0 + c, y0 + ph); ctx.lineTo(x0, y0 + ph - c); ctx.lineTo(x0, y0 + c);
+        ctx.closePath();
+        ctx.strokeStyle = t.backPanel;
+        ctx.lineWidth = Math.max(2, W * 0.004);
+        ctx.stroke();
+      });
+    }
+    drawSpeckle(t.speckle, 42, t.speckleColor ?? 'rgba(255,255,255,0.8)');
     if (t.backText) {
-      // marca girada en la cara trasera (partida en la costura: se dibuja en ambos extremos)
-      const backW = W - frontW - 2 * sideW;
-      const size = fitFont(ctx, t.backText, H * 0.5, H * 0.07, 300, '', DISPLAY, 0.55);
-      [backW * 0.22, W + backW * 0.22].forEach((x) => {
-        drawVerticalText(t.backText, x - backW / 2 + backW * 0.3, H * 0.72, size, 300, t.backTextColor ?? '#ffffff', 'start', '', size * 0.55, true, DISPLAY);
+      onBack(() => {
+        const size = fitFont(ctx, t.backText, H * 0.42, backW * 0.1, 300, '', DISPLAY, 0.6);
+        const x = -backW * 0.12;
+        drawVerticalText(t.backText, x, H * 0.66, size, 300, t.backTextColor ?? '#ffffff', 'start', '', size * 0.6, true, DISPLAY);
+        if (t.backLogo) {
+          // logo "//": dos franjas inclinadas
+          const lx = backW * 0.18, ly = H * 0.2, hh = H * 0.05, ww = backW * 0.06;
+          ctx.fillStyle = t.backTextColor ?? '#ffffff';
+          [-0.6, 0.6].forEach((o) => {
+            ctx.beginPath();
+            ctx.moveTo(lx + o * ww - ww * 0.45, ly + hh * 0.5);
+            ctx.lineTo(lx + o * ww + ww * 0.15, ly - hh * 0.5);
+            ctx.lineTo(lx + o * ww + ww * 0.7, ly - hh * 0.5);
+            ctx.lineTo(lx + o * ww + ww * 0.1, ly + hh * 0.5);
+            ctx.closePath();
+            ctx.fill();
+          });
+        }
       });
     }
   }

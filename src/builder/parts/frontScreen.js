@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { roundedPlane, roundedRectShape, chamferRectShape, shapePlane, isLoftShape } from '../utils/roundedBox.js';
+import { roundedPlane, roundedRectShape, chamferRectShape, shapePlane, isLoftShape, notchedGlassShape } from '../utils/roundedBox.js';
 import { makeScreenMaterial } from '../materials.js';
 import { makeScreenTexture } from '../textures/makeScreen.js';
 
@@ -12,6 +12,8 @@ export function buildFrontScreen(cfg, L) {
 
   // La manga de la etiqueta va 0.2 mm por delante del cuerpo: la pantalla debe quedar por delante de ella.
   const z = b.depth / 2 + (cfg.label.enabled && !isLoftShape(b) ? 0.34 : 0.06);
+  if (s.glass) return buildGlass(cfg, L, z, group);
+
   const plane = (w, h, r) => (s.chamfer > 0
     ? shapePlane(chamferRectShape(w, h, r), w, h)
     : roundedPlane(w, h, r));
@@ -48,6 +50,33 @@ export function buildFrontScreen(cfg, L) {
     group.add(bezel);
   }
 
+  group.userData.ready = ready;
+  return group;
+}
+
+/**
+ * Losa de cristal negro en relieve (s.glass = { depth, notchTop, notchBottom }) con la pantalla
+ * impresa en su cara frontal, recortada con la misma silueta (chaflanes + muescas).
+ */
+function buildGlass(cfg, L, z, group) {
+  const s = cfg.frontScreen;
+  const g = s.glass;
+  const shape = () => notchedGlassShape(s.width, s.height, s.chamfer ?? 0, g.notchTop, g.notchBottom);
+  const depth = g.depth ?? 1;
+  const bevel = Math.min(0.35, depth / 3);
+  const slab = new THREE.Mesh(
+    new THREE.ExtrudeGeometry(shape(), { depth: depth - bevel, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 3, curveSegments: 8 }),
+    new THREE.MeshPhysicalMaterial({ color: s.bezelColor ?? 0x050505, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }),
+  );
+  slab.name = 'glass';
+  slab.position.set(s.offsetX, L.bodyY + s.offsetY, z - 0.3);
+  group.add(slab);
+
+  const { texture, ready } = makeScreenTexture(s, { aspect: s.height / s.width });
+  const screen = new THREE.Mesh(shapePlane(shape(), s.width, s.height), makeScreenMaterial(s, texture));
+  screen.name = 'screen';
+  screen.position.set(s.offsetX, L.bodyY + s.offsetY, z - 0.3 + depth + 0.02);
+  group.add(screen);
   group.userData.ready = ready;
   return group;
 }

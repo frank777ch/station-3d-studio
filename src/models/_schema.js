@@ -46,9 +46,11 @@ export const DEFAULTS = {
     loft: false,
     profile: null,        // [[t, sx, sz], ...] escala de ancho/grosor a lo largo de la altura
     topRound: 0,          // radio (mm) de las esquinas superiores vistas de frente
-    topChamfer: 0,        // chaflán (mm) de las esquinas superiores vistas de frente
+    topChamfer: 0,        // chaflán (mm) de las esquinas superiores vistas de frente (alto que ocupa)
+    topChamferX: null,    // cuánto entra el chaflán en horizontal (null = igual al alto, 45°)
     bottomRound: 0,
     bottomChamfer: 0,
+    bottomChamferX: null,
     topRoundDepth: 0,     // redondeo superior visto de perfil
     bottomRoundDepth: 0,
     edgeRadiusBottom: null, // canto inferior (por defecto = edgeRadius)
@@ -84,6 +86,8 @@ export const DEFAULTS = {
     bezel: 0.6,           // margen del bisel (mm, 0 = sin bisel)
     bezelDepth: 0,        // bisel en relieve (mm)
     bezelColor: '#050505',
+    glass: null,          // losa de cristal en relieve: { depth, notchTop: { top, bottom, depth }, notchBottom }
+    resolution: null,     // ancho del canvas de la pantalla (px)
     offsetX: -6,
     offsetY: 9,
     mode: 'procedural',
@@ -265,6 +269,9 @@ export const DEFAULTS = {
       splitRight: 0.20,                 // altura del corte en el borde derecho
       speckle: 0.35,                    // moteado sutil (0 = ninguno)
       backText: null,                   // texto girado en la trasera
+      backLogo: false,                  // logo "//" encima del texto trasero
+      backPanel: null,                  // color del panel en relieve de la trasera (contorno)
+      speckleColor: null,               // color de las motas claras
     },
     // template 'pill' (fondo oscuro con píldora vertical degradada y sabor girado, estilo refill Eco III)
     pill: {

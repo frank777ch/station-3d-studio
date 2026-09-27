@@ -458,20 +458,22 @@ export function shapePlane(shape, width, height, curveSegments = 12) {
 export function shapeSection({
   width, depth, height, cornerRadius = 0, profile = null,
   topRound = 0, topChamfer = 0, bottomRound = 0, bottomChamfer = 0,
+  topChamferX = null, bottomChamferX = null,
   topRoundDepth = 0, bottomRoundDepth = 0,
 }) {
   const H = height;
-  const inset = (dist, R, type) => {
+  // chaflán: topChamfer = alto (mm) que ocupa; topChamferX = cuánto entra en horizontal (por defecto igual, 45°)
+  const inset = (dist, R, type, X = R) => {
     if (!(R > 0) || dist >= R) return 0;
     const k = R - dist;
-    return type === 'round' ? R - Math.sqrt(Math.max(0, R * R - k * k)) : k;
+    return type === 'round' ? R - Math.sqrt(Math.max(0, R * R - k * k)) : (k * (X ?? R)) / R;
   };
   const section = (y) => {
     const [sx, sz] = sampleProfile(profile, y / H);
     let w = width * sx;
     let d = depth * sz;
-    w -= 2 * (inset(H - y, topRound, 'round') + inset(H - y, topChamfer, 'chamfer')
-      + inset(y, bottomRound, 'round') + inset(y, bottomChamfer, 'chamfer'));
+    w -= 2 * (inset(H - y, topRound, 'round') + inset(H - y, topChamfer, 'chamfer', topChamferX)
+      + inset(y, bottomRound, 'round') + inset(y, bottomChamfer, 'chamfer', bottomChamferX));
     d -= 2 * (inset(H - y, topRoundDepth, 'round') + inset(y, bottomRoundDepth, 'round'));
     w = Math.max(0.2, w);
     d = Math.max(0.2, d);
@@ -494,4 +496,40 @@ export function shapeSection({
 export function isLoftShape(b) {
   return !!(b.loft || (b.profile && b.profile.length) || b.topRound || b.topChamfer || b.bottomRound
     || b.bottomChamfer || b.topRoundDepth || b.bottomRoundDepth);
+}
+
+/**
+ * Contorno de cristal: rectángulo con esquinas achaflanadas y muescas trapezoidales centradas
+ * arriba y abajo (el cuerpo entra en el cristal), como la pantalla del Rifbar MixPro.
+ * notch = { top: ancho en el borde, bottom: ancho del fondo, depth: profundidad, x: desplazamiento } (mm)
+ */
+export function notchedGlassShape(width, height, chamfer, notchTop = null, notchBottom = null) {
+  const w = width / 2;
+  const h = height / 2;
+  const c = Math.max(0, Math.min(chamfer, w, h));
+  const s = new THREE.Shape();
+  s.moveTo(-w + c, -h);
+  if (notchBottom) {
+    const x0 = notchBottom.x ?? 0;
+    s.lineTo(x0 - notchBottom.top / 2, -h);
+    s.lineTo(x0 - notchBottom.bottom / 2, -h + notchBottom.depth);
+    s.lineTo(x0 + notchBottom.bottom / 2, -h + notchBottom.depth);
+    s.lineTo(x0 + notchBottom.top / 2, -h);
+  }
+  s.lineTo(w - c, -h);
+  s.lineTo(w, -h + c);
+  s.lineTo(w, h - c);
+  s.lineTo(w - c, h);
+  if (notchTop) {
+    const x0 = notchTop.x ?? 0;
+    s.lineTo(x0 + notchTop.top / 2, h);
+    s.lineTo(x0 + notchTop.bottom / 2, h - notchTop.depth);
+    s.lineTo(x0 - notchTop.bottom / 2, h - notchTop.depth);
+    s.lineTo(x0 - notchTop.top / 2, h);
+  }
+  s.lineTo(-w + c, h);
+  s.lineTo(-w, h - c);
+  s.lineTo(-w, -h + c);
+  s.closePath();
+  return s;
 }
