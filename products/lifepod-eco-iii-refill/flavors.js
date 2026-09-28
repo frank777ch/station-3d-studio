@@ -1,21 +1,21 @@
-/** Sabores del refill Life Pod Eco III 20K (Vape Station Perú). [id, nombre, degradado de la píldora arriba→abajo, src]. */
+/** Sabores del refill Life Pod Eco III 20K (Vape Station Perú). [id, nombre, degradado del arco arriba→abajo (medido en la foto de cada sabor), src]. */
 import { defineVariant } from '../../src/models/_schema.js';
 import base from './base.js';
 
 // prettier-ignore
 export const FLAVORS = [
-  ['blueberry-bubblegum',     'Blueberry Bubblegum',     ['#e070c8', '#9aa6d8', '#48d2dc'], 'foto'],
-  ['cherry-bubblegum',        'Cherry Bubblegum',        ['#f24a1c', '#d8407a', '#b040c8'], 'foto'],
-  ['grape-bubblegum',         'Grape Bubblegum',         ['#6a38b0', '#c43cb0', '#e84aa8'], 'foto'],
-  ['green-apple-ice',         'Green Apple Ice',         ['#6ad0e0', '#8ad89a', '#8ccc2a'], 'foto'],
-  ['green-grape-ice',         'Green Grape Ice',         ['#c8d830', '#b07a8a', '#a040b8'], 'foto'],
-  ['love-66',                 'Love 66',                 ['#f4c8e4', '#ec88c8', '#e048b0'], 'foto'],
-  ['miami-mint',              'Miami Mint',              ['#78d8e8', '#3a78d0', '#0a2ea8'], 'foto'],
-  ['mint-bubblegum',          'Mint Bubblegum',          ['#12c848', '#9ab89a', '#e070b8'], 'foto'],
-  ['passion-fruit-bubblegum', 'Passion Fruit Bubblegum', ['#f4d020', '#f08020', '#e81818'], 'foto'],
-  ['strawberry-bubblegum',    'Strawberry Bubblegum',    ['#f040b0', '#8a48c0', '#1030c0'], 'foto'],
-  ['strawberry-kiwi',         'Strawberry Kiwi',         ['#cfe8b8', '#e0a878', '#ec6a20'], 'foto'],
-  ['watermelon-bubblegum',    'Watermelon Bubblegum',    ['#f06020', '#ec6878', '#e060b8'], 'foto'],
+  ['blueberry-bubblegum',     'Blueberry Bubblegum',     ['#df66b9', '#78b4cf', '#46cad5'], 'foto'],
+  ['cherry-bubblegum',        'Cherry Bubblegum',        ['#eb3713', '#cb3f87', '#b743b1'], 'foto'],
+  ['grape-bubblegum',         'Grape Bubblegum',         ['#762eaa', '#cc36aa', '#df3ca8'], 'foto'],
+  ['green-apple-ice',         'Green Apple Ice',         ['#79d4e1', '#7ad0b3', '#83c916'], 'foto'],
+  ['green-grape-ice',         'Green Grape Ice',         ['#b2d41b', '#a57d82', '#a838ad'], 'foto'],
+  ['love-66',                 'Love 66',                 ['#e09fcd', '#db5db7', '#d544ac'], 'foto'],
+  ['miami-mint',              'Miami Mint',              ['#79d4e1', '#197cc9', '#0035b0'], 'foto'],
+  ['mint-bubblegum',          'Mint Bubblegum',          ['#05be2c', '#ae8292', '#dc5fb4'], 'foto'],
+  ['passion-fruit-bubblegum', 'Passion Fruit Bubblegum', ['#eeca00', '#e94f00', '#e40300'], 'foto'],
+  ['strawberry-bubblegum',    'Strawberry Bubblegum',    ['#e447b0', '#6440b4', '#033cb6'], 'foto'],
+  ['strawberry-kiwi',         'Strawberry Kiwi',         ['#c9b679', '#e26d2f', '#e5561d'], 'foto'],
+  ['watermelon-bubblegum',    'Watermelon Bubblegum',    ['#e95d25', '#dd6190', '#dc5fb4'], 'foto'],
 ];
 
 export default FLAVORS.map(([slug, name, gradient, src]) =>
